@@ -1,0 +1,11 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: index
+parts:
+  - caption: Data Preparation and Analysis
+    chapters:
+    - file: 01-preparation_analysis/data_retrivial
+    - file: 01-preparation_analysis/data_preprocessing
+    - file: 01-preparation_analysis/exploratory_data_analysis
