@@ -5,8 +5,6 @@ capitolo 1 (data preparation & analysis):
 
 capitolo 2 (supervised approach):
 
-capitolo 3 (unsupervised approach): opzionale
-
 capitolo 4 (conclusions & deployment):
 
 capitolo 5 (EXTRA reinforcement learning approach):
