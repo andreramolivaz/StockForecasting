@@ -9,3 +9,5 @@ parts:
     - file: 01-preparation_analysis/data_retrivial
     - file: 01-preparation_analysis/data_preprocessing
     - file: 01-preparation_analysis/exploratory_data_analysis
+    - file: 01-preparation_analysis/reinforcement_learning
+    - file: 01-preparation_analysis/Train
