@@ -3,8 +3,14 @@
 [![PyPI][pypi-badge]][pypi-link]
 [![Conda][conda-badge]][conda-link]
 
-The project is about predicting stock prices. Is done for the University Course Data and Web Mining UNIVE Course Id. CT0509. Venice IT, 2023.
-Main features include: data retrivial (thanks mainly to yf API), feature engineering (creating several indicator like MACD, ROI ... ), exploratory data analysis, model fitting (several approach: ARIMA, RF, LG RL)
+The project is about predicting stock prices. Project done for the University Course Data and Web Mining, UNIVE Course Id. CT0509. Venice IT, 2023.
+
+
+Main features include: 
+- data retrivial (thanks mainly to yf API)
+- feature engineering (creating several indicator like MACD, ROI ... )
+- exploratory data analysis
+- model fitting (several approach: ARIMA, RF, LG RL)
 
 The book is avaible [here](https://andreramolivaz.github.io/Stock-Forecasting/index.html).
 
