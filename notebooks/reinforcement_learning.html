@@ -1,0 +1,1155 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Reinforcement Learning &#8212; Stock Forecast</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/reinforcement_learning';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="ARIMA for Time Series Analysis" href="time_series_analysis.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Stock Forecast - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Stock Forecast - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Introduction
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Preparation and Analysis</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="data_retrivial.html">Data Retrivial</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="data_preprocessing.html">Data Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploratory_data_analysis.html">Exploratory Data Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Modeling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="supervised_learning.html">Supervised Learning</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="time_series_analysis.html">ARIMA for Time Series Analysis</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reinforcement Learning</a></li>
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/andreramolivaz/CT0590/tree/data-model" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/andreramolivaz/CT0590/tree/data-model/issues/new?title=Issue%20on%20page%20%2Fnotebooks/reinforcement_learning.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/reinforcement_learning.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Reinforcement Learning</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Reinforcement Learning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-concepts">Theoretical concepts</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#markov-decision-process">1. Markov Decision Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reward-and-evaluation-function">2. Reward and evaluation function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-rl-algorithms">3. Common RL algorithms</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#use-of-rl-in-finance">Use of RL in finance</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-implementation">Practical implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction-to-financial-market-simulation-with-gym-mtsim">Introduction to Financial Market Simulation with Gym-MTSim</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-a-reinforcement-learning-environment-for-forex-trading-with-gym-mtsim">Setting Up a Reinforcement Learning Environment for Forex Trading with Gym-MTSim</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="reinforcement-learning">
+<h1>Reinforcement Learning<a class="headerlink" href="#reinforcement-learning" title="Permalink to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h1>
+<p>Reinforcement Learning is a branch of machine learning that focuses on how agents should act in an environment to maximize a notion of cumulative reward. Unlike supervised learning, where algorithms are trained on labeled examples, RL learns from a trial-and-error process based on the environment’s responses to its actions.</p>
+<p>Differences between RL and other learning methods:</p>
+<ul class="simple">
+<li><p><strong>Supervised learning</strong>: Algorithms learn from labeled examples, trying to predict label based on the training set;</p></li>
+<li><p><strong>Unsupervised learning</strong>: Algorithms try to find patterns in the data, without any labels;</p></li>
+<li><p><strong>Reinforcement learning</strong>: Agent learns to make decision through rewards (or punishments) received from its actions.</p></li>
+</ul>
+<p><strong>Key elements:</strong></p>
+<ul class="simple">
+<li><p>Agent:</p>
+<ul>
+<li><p><strong>Definition</strong>: The agent is the entity that makes decisions and learns through interaction with the environment. In RL, the agent chooses actions to take based on its current policy.</p></li>
+<li><p><strong>Role in RL</strong>: The agent is at the center of learning in RL. Its goal is to learn the best possible policy, that is, a map from states to actions, to maximize the total reward collected over time.</p></li>
+</ul>
+</li>
+<li><p>Enviroment:</p>
+<ul>
+<li><p><strong>Definition</strong>: Environment represents the context or world in which the agent operates. It includes anything that the agent can interact with but does not have direct control over;</p></li>
+<li><p><strong>Interaction with the agent</strong>: The environment responds to the agent’s actions and presents new states and rewards to the agent. The nature of the environment can vary from simple and static to complex and dynamic.</p></li>
+</ul>
+</li>
+<li><p>State:</p>
+<ul>
+<li><p><strong>Definition</strong>: A state is a configuration or representation of the environment at a given time. States provide the information the agent needs to make decisions.</p></li>
+<li><p><strong>Importance</strong>: The quality and quantity of information available in states can significantly influence the effectiveness of agent learning.</p></li>
+</ul>
+</li>
+<li><p>Action:</p>
+<ul>
+<li><p><strong>Definition</strong>: Actions are the various behaviors or moves that the agent can perform. The set of all available actions is known as the action space.</p></li>
+<li><p><strong>Action-Stata dynamics</strong>: Every action taken by the agent affects the state of the environment. The relationship between actions and their consequence on states is fundamental to the agent’s decision making.</p></li>
+</ul>
+</li>
+<li><p>Reward:</p>
+<ul>
+<li><p><strong>Definnition</strong>: A reward is immediate feedback provided to the agent by the environment as a consequence of his or her actions. Rewards can be positive (to encourage certain actions) or negative (to discourage certain actions).</p></li>
+<li><p><strong>Role in learning</strong>: Rewards are the main guide for the agent in the learning process. The agent’s goal is to maximize the sum of rewards over time, often referred to as return.</p></li>
+</ul>
+</li>
+<li><p>Policy:</p>
+<ul>
+<li><p><strong>Definition</strong>: A policy is a strategy adopted by the agent, a kind of rule or algorithm that decides what action to take based on the current state.</p></li>
+<li><p><strong>Types</strong>: Policies can be deterministic or stochastic. A deterministic policy always provides the same action for a given state, while a stochastic policy selects actions according to a probability distribution.</p></li>
+</ul>
+</li>
+<li><p>Evaluation functions:</p>
+<ul>
+<li><p><strong>Goal</strong>: These functions help the agent evaluate the effectiveness of his or her actions and policies.</p></li>
+<li><p><strong>Types</strong>:</p>
+<ul>
+<li><p><strong>Value function</strong>: Estimates the expected return from a state following a given policy.</p></li>
+<li><p><strong>Q-Value function</strong>: also known as <strong>Action-Value function</strong>. Estimates the expected return for a state-action pair.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Model:</p>
+<ul>
+<li><p><strong>Description</strong>: A model is an internal representation of the environment that the agent uses to predict how the environment will respond to its actions.</p></li>
+<li><p><strong>Model-based vs model-free RL</strong>: In model-based RL, the agent uses an explicit model of the environment to plan its actions. In model-free RL, the agent learns directly from interactions with the environment without an explicit model.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="theoretical-concepts">
+<h1>Theoretical concepts<a class="headerlink" href="#theoretical-concepts" title="Permalink to this heading">#</a></h1>
+<section id="markov-decision-process">
+<h2>1. Markov Decision Process<a class="headerlink" href="#markov-decision-process" title="Permalink to this heading">#</a></h2>
+<p>The Markov Decision Process (MDP) is a fundamental mathematical framework in the field of Reinforcement Learning. It provides a formalization for decision-making in uncertain and dynamic situations. An MDP is characterized by a set of states, a set of actions, transition probabilities and reward functions.</p>
+<p>Key MDP elements:</p>
+<ul class="simple">
+<li><p><strong>States</strong>: A set of states <span class="math notranslate nohighlight">\(S\)</span> represents all the possible configurations the environment can be in.</p></li>
+<li><p><strong>Actions</strong>: A set of actions <span class="math notranslate nohighlight">\(A\)</span> that the agent can take. The set of available actions may depend on the current state.</p></li>
+<li><p><strong>Transition probability</strong>: A transaction function <span class="math notranslate nohighlight">\(P(s_{t+1} | s_t, a_t)\)</span> which defines the probability of transition to the state <span class="math notranslate nohighlight">\(s_{t+1}\)</span> given the current state <span class="math notranslate nohighlight">\(s_t\)</span> and action <span class="math notranslate nohighlight">\(a_t\)</span>.</p></li>
+<li><p><strong>Reward</strong>: A reward function <span class="math notranslate nohighlight">\(R(s_t, a_t, s_{t+1})\)</span> which assigns a reward (or a punishment) to the agent for the transition from state <span class="math notranslate nohighlight">\(s_t\)</span> to state <span class="math notranslate nohighlight">\(s_{t+1}\)</span> after taking action <span class="math notranslate nohighlight">\(a_t\)</span>.</p></li>
+</ul>
+<p>The fundamental property of an MDP is the “Markov property,” which states that the future is independent of the past given the present. This means that the transition probability and reward depend only on the current state and the action taken, not on the history of previous actions or states.</p>
+</section>
+<section id="reward-and-evaluation-function">
+<h2>2. Reward and evaluation function<a class="headerlink" href="#reward-and-evaluation-function" title="Permalink to this heading">#</a></h2>
+<p>In the context of Reinforcement Learning, the reward and evaluation function are central concepts that guide agent learning and decision-making. This chapter explores the nature of these components and their role in RL.</p>
+<p>Reward:</p>
+<ul class="simple">
+<li><p><strong>Definition</strong>: A reward is a scalar value that represents the immediate feedback provided to the agent by the environment as a consequence of his or her actions. Rewards can be positive (to encourage certain actions) or negative (to discourage certain actions).</p></li>
+<li><p><strong>Role in learning</strong>: Rewards are the main guide for the agent in the learning process. The agent’s goal is to maximize the sum of rewards over time, often referred to as return.</p></li>
+</ul>
+<p>Evaluation function:</p>
+<ul class="simple">
+<li><p><strong>Value function</strong>: The value function, denoted as <span class="math notranslate nohighlight">\(V(s)\)</span>, estimates the expected total return from a states following a given policy. It provides a measure of the goodness-of-fit of a state.</p></li>
+<li><p><strong>Q-value function</strong>: The Q-value function, or action-value function, denoted as <span class="math notranslate nohighlight">\(Q(s, a)\)</span>, evaluates the action <span class="math notranslate nohighlight">\(a\)</span> in the state <span class="math notranslate nohighlight">\(s\)</span>. It estimates the expected return following the action <span class="math notranslate nohighlight">\(a\)</span> in the state <span class="math notranslate nohighlight">\(s\)</span> and then adhering to a specific policy.</p></li>
+</ul>
+</section>
+<section id="common-rl-algorithms">
+<h2>3. Common RL algorithms<a class="headerlink" href="#common-rl-algorithms" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Q-learning is a model-free learning method that seeks to learn an optimal policy independently of the agent’s current action.
+The algorithm iteratively updates the Q-value estimates for each state-action pair using the Q-learning update formula, based on the reward received and the maximum Q-value of the next state. Q-learning is widely used for problems with discrete state and action spaces and is well suited to situations with uncertain environmental dynamics.</p></li>
+<li><p>SARSA is a model-based differential time learning (TD) algorithm.
+Unlike Q-learning, SARSA updates its Q-values based on the agent’s current policy (on-policy). The update considers the current transition and the next action the agent intends to perform. SARSA is useful in environments where risk assessment and safety considerations are important because it takes into account the actual path the agent plans to follow.</p></li>
+</ul>
+<p>Some remarks:</p>
+<ul class="simple">
+<li><p><strong>Exploration vs. exploitation</strong>: A key aspect in RL is the balance between exploration (trying new actions) and exploitation (using acquired knowledge). RL algorithms must effectively manage this balance;</p></li>
+<li><p><strong>Scalability and complexity</strong>: the scalability of algorithms in environments with large state and action spaces is a significant challenge. Methods such as deep learning have been integrated into RL to address this challenge.</p></li>
+</ul>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="use-of-rl-in-finance">
+<h1>Use of RL in finance<a class="headerlink" href="#use-of-rl-in-finance" title="Permalink to this heading">#</a></h1>
+<p>In trading, RL can be used to develop automated strategies that decide when to buy, sell, or hold a stock or cryptocurrency.
+Financial markets are complex, noisy, and nonstationary, making trading an ideal challenge for RL, which can adapt to such dynamic conditions.</p>
+<p>Challenges:</p>
+<ul class="simple">
+<li><p>Financial data are often noisy and exhibit nonstationarity, which can lead to overfitting and inconsistent model performance.</p></li>
+<li><p>Markets change rapidly, and what has worked in the past may no longer be valid, requiring the model to continually adapt.</p></li>
+</ul>
+<p>Pros of using RL:</p>
+<ul class="simple">
+<li><p><strong>Automation and Scalability</strong>: The RL can automate trading decisions and operate on a large scale, analyzing huge amounts of data more efficiently than human analysis.</p></li>
+<li><p><strong>Adaptability</strong>: RL models can dynamically adapt to changes in the market, continuously learning from new data.</p></li>
+<li><p><strong>High Performance Potential</strong>: When configured well, RL models can potentially outperform traditional strategies and human traders, especially in highly volatile markets.</p></li>
+</ul>
+<p>Common approaches:</p>
+<ul class="simple">
+<li><p><strong>Deep reinforcement learning</strong>: The use of deep neural networks to handle the complexity of market data and capture nonlinear relationships.</p></li>
+<li><p><strong>Optimized exploration strategies</strong>: Development of exploration methods that balance between learning from historical market situations and exploring new trading strategies.</p></li>
+</ul>
+<section id="practical-implementation">
+<h2>Practical implementation<a class="headerlink" href="#practical-implementation" title="Permalink to this heading">#</a></h2>
+<section id="introduction-to-financial-market-simulation-with-gym-mtsim">
+<h3>Introduction to Financial Market Simulation with Gym-MTSim<a class="headerlink" href="#introduction-to-financial-market-simulation-with-gym-mtsim" title="Permalink to this heading">#</a></h3>
+<p>In this section of our Jupyter Notebook, we explore the world of financial market simulation using the <code class="docutils literal notranslate"><span class="pre">gym_mtsim</span></code> library, an extension of OpenAI’s Gym. The Gym library provides a standardized interface for reinforcement learning (RL) tasks, and <code class="docutils literal notranslate"><span class="pre">gym_mtsim</span></code> specifically caters to financial market simulations, offering a unique and practical approach for testing and developing financial strategies in a controlled, simulated environment.</p>
+<p>The code snippet provided initializes various environments that simulate different financial markets and trading scenarios. Each environment corresponds to a unique market type or strategy:</p>
+<ol class="arabic simple">
+<li><p><strong>Forex Markets (Hedged and Unhedged):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">forex-hedge-v0</span></code> simulates a foreign exchange (Forex) market with a hedging strategy.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forex-unhedge-v0</span></code> represents the Forex market without a hedging strategy.</p></li>
+</ul>
+</li>
+<li><p><strong>Stock Markets (Hedged and Unhedged):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">stocks-hedge-v0</span></code> sets up a simulated environment for stock market trading with a hedging strategy.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stocks-unhedge-v0</span></code> offers a simulation of stock market trading without the use of hedging.</p></li>
+</ul>
+</li>
+<li><p><strong>Cryptocurrency Markets (Hedged and Unhedged):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">crypto-hedge-v0</span></code> is tailored for cryptocurrency market simulations implementing hedging strategies.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crypto-unhedge-v0</span></code> provides a crypto market environment without hedging.</p></li>
+</ul>
+</li>
+<li><p><strong>Mixed Asset Markets (Hedged and Unhedged):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mixed-hedge-v0</span></code> creates a diverse market environment with multiple asset types, using hedging strategies.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mixed-unhedge-v0</span></code> simulates a mixed asset market without the use of hedging strategies.</p></li>
+</ul>
+</li>
+</ol>
+<p>Each of these environments can be used to train and evaluate RL models, providing insights into different trading strategies and market behaviors. This approach is invaluable for researchers and practitioners in the field of quantitative finance, offering a risk-free platform to experiment and refine trading algorithms.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">plotly.offline</span> <span class="k">as</span> <span class="nn">pyo</span>
+<span class="n">pyo</span><span class="o">.</span><span class="n">init_notebook_mode</span><span class="p">(</span><span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">        <script type="text/javascript">
+        window.PlotlyConfig = {MathJaxConfig: 'local'};
+        if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+        if (typeof require !== 'undefined') {
+        require.undef("plotly");
+        requirejs.config({
+            paths: {
+                'plotly': ['https://cdn.plot.ly/plotly-2.27.0.min']
+            }
+        });
+        require(['plotly'], function(Plotly) {
+            window._Plotly = Plotly;
+        });
+        }
+        </script>
+        </div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">gym_mtsim</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;forex-hedge-v0&#39;</span><span class="p">)</span>
+<span class="c1"># env = gym.make(&#39;stocks-hedge-v0&#39;)</span>
+<span class="c1"># env = gym.make(&#39;crypto-hedge-v0&#39;)</span>
+<span class="c1"># env = gym.make(&#39;mixed-hedge-v0&#39;)</span>
+
+<span class="c1"># env = gym.make(&#39;forex-unhedge-v0&#39;)</span>
+<span class="c1"># env = gym.make(&#39;stocks-unhedge-v0&#39;)</span>
+<span class="c1"># env = gym.make(&#39;crypto-unhedge-v0&#39;)</span>
+<span class="c1"># env = gym.make(&#39;mixed-unhedge-v0&#39;)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="setting-up-a-reinforcement-learning-environment-for-forex-trading-with-gym-mtsim">
+<h2>Setting Up a Reinforcement Learning Environment for Forex Trading with Gym-MTSim<a class="headerlink" href="#setting-up-a-reinforcement-learning-environment-for-forex-trading-with-gym-mtsim" title="Permalink to this heading">#</a></h2>
+<p>In this section of our Jupyter Notebook, we delve into setting up a more advanced financial market simulation environment using <code class="docutils literal notranslate"><span class="pre">gym_mtsim</span></code>. This setup is specifically tailored for reinforcement learning (RL) applications in Forex trading. Our focus is to demonstrate how RL can be applied in the complex and dynamic world of foreign exchange markets.</p>
+<p>The provided code snippet establishes a simulated trading environment, which is a critical step for training RL agents. Here’s a detailed breakdown of the components and their roles:</p>
+<ol class="arabic simple">
+<li><p><strong>Importing Necessary Libraries and Modules:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pytz</span></code>: For timezone operations, crucial in time-sensitive financial markets.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">datetime</span></code>, <code class="docutils literal notranslate"><span class="pre">timedelta</span></code>: For handling date and time, essential for simulating real-time market scenarios.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numpy</span></code>: A fundamental package for scientific computing, used here for statistical operations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gym_mtsim</span></code>: The core library for creating the Forex market simulation environment.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MtEnv</span></code>, <code class="docutils literal notranslate"><span class="pre">MtSimulator</span></code>, <code class="docutils literal notranslate"><span class="pre">FOREX_DATA_PATH</span></code>: Specific classes and constants from <code class="docutils literal notranslate"><span class="pre">gym_mtsim</span></code> used for setting up the environment.</p></li>
+</ul>
+</li>
+<li><p><strong>Initializing the Market Simulator (<code class="docutils literal notranslate"><span class="pre">MtSimulator</span></code>):</strong></p>
+<ul class="simple">
+<li><p><strong>Currency and Balance:</strong> The simulation uses USD as the base unit with an initial balance of $10,000.</p></li>
+<li><p><strong>Leverage and Risk Management:</strong> A leverage of 100x is set, along with a stop-out level at 20% to manage risk.</p></li>
+<li><p><strong>Hedging:</strong> The simulator is configured to allow hedging strategies.</p></li>
+<li><p><strong>Market Data:</strong> The <code class="docutils literal notranslate"><span class="pre">symbols_filename</span></code> parameter points to the Forex market data source.</p></li>
+</ul>
+</li>
+<li><p><strong>Creating the Trading Environment (<code class="docutils literal notranslate"><span class="pre">MtEnv</span></code>):</strong></p>
+<ul class="simple">
+<li><p><strong>Trading Symbols:</strong> We focus on three currency pairs: GBPCAD, EURUSD, and USDJPY.</p></li>
+<li><p><strong>Window Size:</strong> A window size of 10 is set, determining how much past data is visible to the agent at any point.</p></li>
+<li><p><strong>Thresholds for Holding and Closing Positions:</strong> Both set to 0.5, dictating the agent’s decision-making criteria.</p></li>
+<li><p><strong>Trading Fees:</strong> Dynamically calculated based on the currency pair, introducing a realistic aspect of cost in trading.</p></li>
+<li><p><strong>Order Limits and Parallel Processing:</strong> Each symbol can have up to 2 orders, and the environment supports multiprocessing with 2 processes.</p></li>
+</ul>
+</li>
+</ol>
+<p>This setup provides a rich and realistic environment for training RL agents. The agents can learn and adapt their trading strategies based on historical data, market conditions, and transaction costs. The complexity of this environment, with its multiple currency pairs and dynamic fee structure, offers a challenging yet rewarding platform for exploring the capabilities of RL in Forex trading.</p>
+<p>In the following parts of the notebook, we will introduce the RL concepts and algorithms, and demonstrate how they can be trained within this environment to make informed trading decisions. This practical application not only showcases the power of RL in financial decision-making but also provides a hands-on experience in applying advanced AI techniques in the domain of quantitative finance.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytz</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">gym_mtsim</span> <span class="kn">import</span> <span class="n">MtEnv</span><span class="p">,</span> <span class="n">MtSimulator</span><span class="p">,</span> <span class="n">FOREX_DATA_PATH</span>
+
+
+<span class="n">sim</span> <span class="o">=</span> <span class="n">MtSimulator</span><span class="p">(</span>
+    <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;USD&#39;</span><span class="p">,</span>
+    <span class="n">balance</span><span class="o">=</span><span class="mf">10000.</span><span class="p">,</span>
+    <span class="n">leverage</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>
+    <span class="n">stop_out_level</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">hedge</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">symbols_filename</span><span class="o">=</span><span class="n">FOREX_DATA_PATH</span>
+<span class="p">)</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">MtEnv</span><span class="p">(</span>
+    <span class="n">original_simulator</span><span class="o">=</span><span class="n">sim</span><span class="p">,</span>
+    <span class="n">trading_symbols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GBPCAD&#39;</span><span class="p">,</span> <span class="s1">&#39;EURUSD&#39;</span><span class="p">,</span> <span class="s1">&#39;USDJPY&#39;</span><span class="p">],</span>
+    <span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="c1"># time_points=[desired time points ...],</span>
+    <span class="n">hold_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">close_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">fee</span><span class="o">=</span><span class="k">lambda</span> <span class="n">symbol</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;GBPCAD&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0007</span><span class="p">,</span> <span class="mf">0.00005</span><span class="p">)),</span>
+        <span class="s1">&#39;EURUSD&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0002</span><span class="p">,</span> <span class="mf">0.00003</span><span class="p">)),</span>
+        <span class="s1">&#39;USDJPY&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">)),</span>
+    <span class="p">}[</span><span class="n">symbol</span><span class="p">],</span>
+    <span class="n">symbol_max_orders</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">multiprocessing_processes</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">prices</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;prices[</span><span class="si">{</span><span class="n">symbol</span><span class="si">}</span><span class="s2">].shape:&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">prices</span><span class="p">[</span><span class="n">symbol</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;signal_features.shape:&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">signal_features</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;features_shape:&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">features_shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>prices[GBPCAD].shape: (88, 2)
+prices[EURUSD].shape: (88, 2)
+prices[USDJPY].shape: (88, 2)
+signal_features.shape: (88, 6)
+features_shape: (10, 6)
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this section of our Jupyter Notebook, we demonstrate a basic loop for simulating a trading environment using the setup we previously created with <code class="docutils literal notranslate"><span class="pre">gym_mtsim</span></code>. This loop is fundamental for training reinforcement learning (RL) agents, where they interact with the environment, receive feedback (rewards), and adjust their actions accordingly.</p>
+<p>Here’s a detailed explanation of the code snippet and its role in the RL context:</p>
+<ol class="arabic simple">
+<li><p><strong>Environment Reset (<code class="docutils literal notranslate"><span class="pre">env.reset()</span></code>):</strong></p>
+<ul class="simple">
+<li><p>This initializes or resets the environment to a starting state. It’s akin to starting a new trading day or session, where the RL agent begins with a clean slate.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">reset</span></code> method returns an initial observation, providing the agent with the current state of the market.</p></li>
+</ul>
+</li>
+<li><p><strong>Trading Loop:</strong></p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">while</span> <span class="pre">True:</span></code> loop represents the continuous process of trading in a market. Each iteration of the loop is analogous to a single step or action taken by the RL agent in the environment.</p></li>
+</ul>
+</li>
+<li><p><strong>Sampling an Action (<code class="docutils literal notranslate"><span class="pre">env.action_space.sample()</span></code>):</strong></p>
+<ul class="simple">
+<li><p>At each step, an action is selected randomly from the action space. In a more sophisticated RL setup, this is where the agent’s policy or decision-making logic would determine the action based on the current state (observation).</p></li>
+<li><p>The action could involve buying, selling, holding, or other trading actions specific to the environment’s design.</p></li>
+</ul>
+</li>
+<li><p><strong>Taking a Step (<code class="docutils literal notranslate"><span class="pre">env.step(action)</span></code>):</strong></p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">step</span></code> method advances the environment by one time step using the chosen action. It returns several important pieces of information:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">observation</span></code>: The new state of the market after the action is taken.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reward</span></code>: The immediate reward received after taking the action, which is crucial for RL as it guides the agent’s learning process.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">done</span></code>: A boolean indicating whether the episode (trading session) has ended (e.g., due to bankruptcy, reaching a time limit, etc.).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code>: A dictionary containing supplementary information such as balance, equity, margin levels, etc.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Handling the End of an Episode (<code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">done:</span></code>):</strong></p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">done</span></code> is True, it signals the end of the trading episode. This can trigger the agent to evaluate its performance and learn from the episode.</p></li>
+<li><p>The code then prints out important financial metrics from the <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">balance</span></code>, <code class="docutils literal notranslate"><span class="pre">equity</span></code>, <code class="docutils literal notranslate"><span class="pre">margin</span></code>, <code class="docutils literal notranslate"><span class="pre">free_margin</span></code>, and <code class="docutils literal notranslate"><span class="pre">margin_level</span></code> provide insights into the financial status at the end of the episode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">step_reward</span></code> gives the reward obtained in the final step, which could be used for further analysis or learning.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>This loop forms the core of an RL training process in financial market simulation. In a complete RL application, the agent would not randomly select actions but instead follow a strategy based on its learning and the observed states. The</p>
+<p>feedback from the environment in terms of rewards and state transitions guides the agent to refine its strategy over time, aiming to maximize cumulative rewards, which in the context of trading, could align with maximizing profit or minimizing risk.</p>
+<p>In subsequent sections of our notebook, we will explore how to replace the random action selection with a decision-making policy driven by RL algorithms. We will also look into how the agent learns from the environment’s feedback, adjusts its trading strategy, and improves its performance over successive trading episodes. This iterative learning process is at the heart of applying RL in financial trading simulations, providing valuable insights and practical skills in leveraging AI for quantitative finance.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+        <span class="c1"># print(info)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;balance: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;balance&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, equity: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;equity&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, margin: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;margin&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;free_margin: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;free_margin&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, margin_level: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;margin_level&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;step_reward: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;step_reward&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>balance: 6177.092050631586, equity: 6310.851056072222, margin: 710.0000000000001
+free_margin: 5600.851056072222, margin_level: 8.888522614186227
+step_reward: 133.75900544063552
+</pre></div>
+</div>
+</div>
+</div>
+<p>Printing the results</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;balance: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;balance&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, equity: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;equity&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, margin: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;margin&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;free_margin: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;free_margin&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, margin_level: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;margin_level&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<span class="n">state</span><span class="p">[</span><span class="s1">&#39;orders&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>balance: 6177.092050631586, equity: 6310.851056072222, margin: 710.0000000000001
+free_margin: 5600.851056072222, margin_level: 8.888522614186227
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Id</th>
+      <th>Symbol</th>
+      <th>Type</th>
+      <th>Volume</th>
+      <th>Entry Time</th>
+      <th>Entry Price</th>
+      <th>Exit Time</th>
+      <th>Exit Price</th>
+      <th>Profit</th>
+      <th>Margin</th>
+      <th>Fee</th>
+      <th>Closed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>8</td>
+      <td>USDJPY</td>
+      <td>Sell</td>
+      <td>0.71</td>
+      <td>2021-09-02 00:00:00+00:00</td>
+      <td>109.93700</td>
+      <td>2021-09-03 00:00:00+00:00</td>
+      <td>109.71200</td>
+      <td>133.759005</td>
+      <td>710.000000</td>
+      <td>0.018310</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7</td>
+      <td>USDJPY</td>
+      <td>Sell</td>
+      <td>4.86</td>
+      <td>2021-08-03 00:00:00+00:00</td>
+      <td>109.04200</td>
+      <td>2021-08-05 00:00:00+00:00</td>
+      <td>109.76100</td>
+      <td>-3292.529509</td>
+      <td>4860.000000</td>
+      <td>0.024604</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>6</td>
+      <td>EURUSD</td>
+      <td>Buy</td>
+      <td>5.41</td>
+      <td>2021-07-28 00:00:00+00:00</td>
+      <td>1.18441</td>
+      <td>2021-07-29 00:00:00+00:00</td>
+      <td>1.18865</td>
+      <td>2199.136674</td>
+      <td>6407.658100</td>
+      <td>0.000175</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>5</td>
+      <td>EURUSD</td>
+      <td>Sell</td>
+      <td>4.02</td>
+      <td>2021-07-23 00:00:00+00:00</td>
+      <td>1.17689</td>
+      <td>2021-07-26 00:00:00+00:00</td>
+      <td>1.18029</td>
+      <td>-1448.130259</td>
+      <td>4731.097800</td>
+      <td>0.000202</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3</td>
+      <td>EURUSD</td>
+      <td>Buy</td>
+      <td>0.94</td>
+      <td>2021-07-09 00:00:00+00:00</td>
+      <td>1.18774</td>
+      <td>2021-07-14 00:00:00+00:00</td>
+      <td>1.18358</td>
+      <td>-411.862870</td>
+      <td>1116.475600</td>
+      <td>0.000222</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>4</td>
+      <td>USDJPY</td>
+      <td>Sell</td>
+      <td>0.01</td>
+      <td>2021-07-12 00:00:00+00:00</td>
+      <td>110.34900</td>
+      <td>2021-07-13 00:00:00+00:00</td>
+      <td>110.62700</td>
+      <td>-2.693055</td>
+      <td>10.000000</td>
+      <td>0.019925</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>2</td>
+      <td>EURUSD</td>
+      <td>Buy</td>
+      <td>2.52</td>
+      <td>2021-06-01 00:00:00+00:00</td>
+      <td>1.22126</td>
+      <td>2021-06-02 00:00:00+00:00</td>
+      <td>1.22100</td>
+      <td>-127.610925</td>
+      <td>3077.575200</td>
+      <td>0.000246</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>GBPCAD</td>
+      <td>Sell</td>
+      <td>2.62</td>
+      <td>2021-05-26 00:00:00+00:00</td>
+      <td>1.71089</td>
+      <td>2021-05-28 00:00:00+00:00</td>
+      <td>1.71356</td>
+      <td>-739.218006</td>
+      <td>3698.000907</td>
+      <td>0.000738</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Render in <strong>simple_figure</strong> mode</p>
+<ul class="simple">
+<li><p>Each <em>symbol</em> is illustrated in a different color</p></li>
+<li><p>The <strong>green/red</strong> triangle show successful <strong>buy/sell</strong> actions</p></li>
+<li><p>The <strong>grey</strong> triangles indicate that the <strong>buy/sell</strong> actions encountered and <strong>error</strong></p></li>
+<li><p>The <strong>black</strong> vertical bars specify <strong>close</strong> actions</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">&#39;simple_figure&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/9b4aa2ede8586e97e52acec057e60d7e2318dd02da1f43a76d55ff12d6bd967f.png" src="../_images/9b4aa2ede8586e97e52acec057e60d7e2318dd02da1f43a76d55ff12d6bd967f.png" />
+</div>
+</div>
+<p>Render in <strong>advanced_mode</strong> figure</p>
+<ul class="simple">
+<li><p>Clicking on a symbol name will hide/show its plot</p></li>
+<li><p>Hovering over points and markers will display their details</p></li>
+<li><p>The size of the triangles indicates their relative volume</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">&#39;advanced_figure&#39;</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>                            <div id="e718860f-05bb-40c2-895b-29eef67d9382" class="plotly-graph-div" style="height:600px; width:1400px;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("e718860f-05bb-40c2-895b-29eef67d9382")) {                    Plotly.newPlot(                        "e718860f-05bb-40c2-895b-29eef67d9382",                        [{"hovertext":["balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 9283.968684\u003cbr\u003emargin: 3698.000907\u003cbr\u003efree margin: 5585.967776\u003cbr\u003emargin level: 2.510537","balance: 10000.000000 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 3698.000907\u003cbr\u003efree margin: 5562.781087\u003cbr\u003emargin level: 2.504267","balance: 9260.781994 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9260.781994\u003cbr\u003emargin level: inf","balance: 9260.781994 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9260.781994\u003cbr\u003emargin level: inf","balance: 9260.781994 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 3077.575200\u003cbr\u003efree margin: 6055.595869\u003cbr\u003emargin level: 2.967652","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 8954.428199\u003cbr\u003emargin: 1116.475600\u003cbr\u003efree margin: 7837.952599\u003cbr\u003emargin level: 8.020263","balance: 9133.171069 USD\u003cbr\u003eequity: 8161.195144\u003cbr\u003emargin: 1126.475600\u003cbr\u003efree margin: 7034.719544\u003cbr\u003emargin level: 7.244893","balance: 9130.478014 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 1116.475600\u003cbr\u003efree margin: 7602.139544\u003cbr\u003emargin level: 7.809051","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 4731.097800\u003cbr\u003efree margin: 2539.387085\u003cbr\u003emargin level: 1.536744","balance: 7270.484885 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 7270.484885\u003cbr\u003emargin level: inf","balance: 7270.484885 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 7270.484885\u003cbr\u003emargin level: inf","balance: 7270.484885 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 6407.658100\u003cbr\u003efree margin: 3061.963459\u003cbr\u003emargin level: 1.477860","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 7446.991948\u003cbr\u003emargin: 4860.000000\u003cbr\u003efree margin: 2586.991948\u003cbr\u003emargin level: 1.532303","balance: 9469.621559 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 4860.000000\u003cbr\u003efree margin: 1317.092051\u003cbr\u003emargin level: 1.271007","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6310.851056\u003cbr\u003emargin: 710.000000\u003cbr\u003efree margin: 5600.851056\u003cbr\u003emargin level: 8.888523"],"legendgroup":"g1","line":{"color":"rgba(0.12156862745098039, 0.4666666666666667, 0.7058823529411765, 1.0)"},"mode":"lines+markers","name":"GBPCAD","opacity":1.0,"x":["2021-05-05T00:00:00+00:00","2021-05-06T00:00:00+00:00","2021-05-07T00:00:00+00:00","2021-05-10T00:00:00+00:00","2021-05-11T00:00:00+00:00","2021-05-12T00:00:00+00:00","2021-05-13T00:00:00+00:00","2021-05-14T00:00:00+00:00","2021-05-17T00:00:00+00:00","2021-05-18T00:00:00+00:00","2021-05-19T00:00:00+00:00","2021-05-20T00:00:00+00:00","2021-05-21T00:00:00+00:00","2021-05-24T00:00:00+00:00","2021-05-25T00:00:00+00:00","2021-05-26T00:00:00+00:00","2021-05-27T00:00:00+00:00","2021-05-28T00:00:00+00:00","2021-05-31T00:00:00+00:00","2021-06-01T00:00:00+00:00","2021-06-02T00:00:00+00:00","2021-06-03T00:00:00+00:00","2021-06-04T00:00:00+00:00","2021-06-07T00:00:00+00:00","2021-06-08T00:00:00+00:00","2021-06-09T00:00:00+00:00","2021-06-10T00:00:00+00:00","2021-06-11T00:00:00+00:00","2021-06-14T00:00:00+00:00","2021-06-15T00:00:00+00:00","2021-06-16T00:00:00+00:00","2021-06-17T00:00:00+00:00","2021-06-18T00:00:00+00:00","2021-06-21T00:00:00+00:00","2021-06-22T00:00:00+00:00","2021-06-23T00:00:00+00:00","2021-06-24T00:00:00+00:00","2021-06-25T00:00:00+00:00","2021-06-28T00:00:00+00:00","2021-06-29T00:00:00+00:00","2021-06-30T00:00:00+00:00","2021-07-01T00:00:00+00:00","2021-07-02T00:00:00+00:00","2021-07-05T00:00:00+00:00","2021-07-06T00:00:00+00:00","2021-07-07T00:00:00+00:00","2021-07-08T00:00:00+00:00","2021-07-09T00:00:00+00:00","2021-07-12T00:00:00+00:00","2021-07-13T00:00:00+00:00","2021-07-14T00:00:00+00:00","2021-07-15T00:00:00+00:00","2021-07-16T00:00:00+00:00","2021-07-19T00:00:00+00:00","2021-07-20T00:00:00+00:00","2021-07-21T00:00:00+00:00","2021-07-22T00:00:00+00:00","2021-07-23T00:00:00+00:00","2021-07-26T00:00:00+00:00","2021-07-27T00:00:00+00:00","2021-07-28T00:00:00+00:00","2021-07-29T00:00:00+00:00","2021-07-30T00:00:00+00:00","2021-08-02T00:00:00+00:00","2021-08-03T00:00:00+00:00","2021-08-04T00:00:00+00:00","2021-08-05T00:00:00+00:00","2021-08-06T00:00:00+00:00","2021-08-09T00:00:00+00:00","2021-08-10T00:00:00+00:00","2021-08-11T00:00:00+00:00","2021-08-12T00:00:00+00:00","2021-08-13T00:00:00+00:00","2021-08-16T00:00:00+00:00","2021-08-17T00:00:00+00:00","2021-08-18T00:00:00+00:00","2021-08-19T00:00:00+00:00","2021-08-20T00:00:00+00:00","2021-08-23T00:00:00+00:00","2021-08-24T00:00:00+00:00","2021-08-25T00:00:00+00:00","2021-08-26T00:00:00+00:00","2021-08-27T00:00:00+00:00","2021-08-30T00:00:00+00:00","2021-08-31T00:00:00+00:00","2021-09-01T00:00:00+00:00","2021-09-02T00:00:00+00:00","2021-09-03T00:00:00+00:00"],"y":[1.70525,1.68648,1.69619,1.7070699999999999,1.71108,1.70468,1.7082899999999999,1.70635,1.7059199999999999,1.71128,1.71211,1.7107,1.70726,1.7044000000000001,1.7066,1.71089,1.71345,1.71356,1.7132399999999999,1.70755,1.70462,1.7068400000000001,1.70999,1.71255,1.7139199999999999,1.70927,1.71433,1.71691,1.71341,1.71492,1.71638,1.71949,1.72017,1.72173,1.7158099999999998,1.7177,1.7149299999999998,1.70721,1.71244,1.71535,1.71437,1.71059,1.70511,1.70716,1.71879,1.72167,1.72692,1.7307000000000001,1.72832,1.72767,1.73236,1.7407,1.73684,1.74244,1.7273800000000001,1.72183,1.72851,1.72728,1.73336,1.7481900000000001,1.7405300000000001,1.73688,1.73335,1.73577,1.7441499999999999,1.7412999999999998,1.7408299999999999,1.7419799999999999,1.7408000000000001,1.7316500000000001,1.73282,1.72889,1.7357200000000002,1.7402199999999999,1.7349700000000001,1.74061,1.74874,1.7468,1.73506,1.72784,1.73259,1.7377,1.7353399999999999,1.7338900000000002,1.73501,1.7372800000000002,1.73603,1.7362600000000001],"yaxis":"y","type":"scatter"},{"hovertext":["order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 21.247283\u003cbr\u003emodified volume: 21.2500\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=30142.903324740342, order profit=-1146.2313314354074, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 48.445985\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=49526.81309573146, order profit=-1930.998980923908, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -38.914950\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=49507.25646699986, order profit=-2125.519960248934, free margin=10000.0)","order id: 1\u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -2.620002\u003cbr\u003emodified volume: 2.6200\u003cbr\u003efee: 0.000738\u003cbr\u003emargin: 3698.000907\u003cbr\u003eerror: ","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 78.156858\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=49712.23916233492, order profit=-1947.3489550023482, free margin=9260.78199442195)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -30.766024\u003cbr\u003emodified volume: 30.7700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=43533.02469902977, order profit=-1751.275710254574, free margin=9260.78199442195)","order id: \u003cbr\u003ehold probability: 0.0013\u003cbr\u003ehold: False\u003cbr\u003evolume: 8.993967\u003cbr\u003emodified volume: 8.9900\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=12736.163327044706, order profit=-519.3944161330102, free margin=6055.595869066569)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -70.163684\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=49624.33560180816, order profit=-2035.1199887302316, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -98.827313\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=49543.851534948255, order profit=-2452.434079872507, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 29.373867\u003cbr\u003emodified volume: 29.3700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=41460.547315042706, order profit=-1744.9588299140462, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -29.691461\u003cbr\u003emodified volume: 29.6900\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=41890.97466175877, order profit=-1862.1946842467255, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 48.649918\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48937.159894424716, order profit=-1886.7152479654535, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -33.084660\u003cbr\u003emodified volume: 33.0800\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=46044.221637592585, order profit=-1754.0432575088382, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 12.492729\u003cbr\u003emodified volume: 12.4900\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=17231.36167141196, order profit=-716.1005457601381, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -60.270088\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48751.33486505728, order profit=-1885.1951625381241, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -30.494598\u003cbr\u003emodified volume: 30.4900\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=42565.9124342688, order profit=-1731.0679986715295, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -41.729847\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48401.185770750984, order profit=-1796.406594417608, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -34.326062\u003cbr\u003emodified volume: 34.3300\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=47488.35438730118, order profit=-1930.882296233497, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 54.480632\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48279.37217575232, order profit=-1957.604479532055, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -5.397286\u003cbr\u003emodified volume: 5.4000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=7455.661221749832, order profit=-316.21445829739315, free margin=7034.719543900145)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -88.223994\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48473.505804099645, order profit=-1901.5944427718566, free margin=7602.139543900144)","order id: \u003cbr\u003ehold probability: 0.0018\u003cbr\u003ehold: False\u003cbr\u003evolume: 98.435914\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48378.502854692575, order profit=-1898.451914096738, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 99.066039\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48178.64077669903, order profit=-1868.0283242697135, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 53.679913\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=47848.94942489055, order profit=-2020.5392987076302, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -13.471338\u003cbr\u003emodified volume: 13.4700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=18465.80421974522, order profit=-794.7909272805507, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 52.831003\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48165.9275654244, order profit=-1787.1436145371326, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 99.360558\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48112.117401754025, order profit=-2168.4973189793955, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -88.707268\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48354.20236719404, order profit=-2154.9982657456944, free margin=2539.3870851826714)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -30.269476\u003cbr\u003emodified volume: 30.2700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=42067.232318231916, order profit=-1591.0625501077839, free margin=7270.484885182672)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 15.196229\u003cbr\u003emodified volume: 15.2000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=21138.58423125988, order profit=-735.9086750572756, free margin=9469.621559313784)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 26.252751\u003cbr\u003emodified volume: 26.2500\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=36441.257977830035, order profit=-1601.0862882064519, free margin=9469.621559313784)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 40.477830\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48600.87719298245, order profit=-1992.9853615885736, free margin=2586.9919483369367)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -86.781804\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48442.444384371964, order profit=-2071.831847988481, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 99.289664\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48512.7503679529, order profit=-2065.5941999824718, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -75.488325\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48327.34344426608, order profit=-1795.717127685511, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.1819\u003cbr\u003ehold: False\u003cbr\u003evolume: -47.736491\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48450.18773068601, order profit=-1930.6996362767652, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0001\u003cbr\u003ehold: False\u003cbr\u003evolume: -12.050331\u003cbr\u003emodified volume: 12.0500\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=16429.375487291436, order profit=-596.177530514714, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -16.424036\u003cbr\u003emodified volume: 16.4200\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=22366.75530463127, order profit=-794.7471529485695, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -97.303974\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48137.79736660616, order profit=-1811.1793407132902, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 65.781929\u003cbr\u003emodified volume: 35.0000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=48187.02698418989, order profit=-2105.48869627202, free margin=6177.092050631586)"],"legendgroup":"g1","marker":{"color":["gray","gray","gray","red","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray"],"size":[21.357142857142854,30.0,30.0,9.646857142857144,30.0,27.341142857142856,13.650857142857141,30.0,30.0,26.461142857142857,26.662285714285716,30.0,28.793142857142854,15.850857142857144,30.0,27.165142857142857,30.0,29.578857142857142,30.0,11.394285714285715,30.0,30.0,30.0,30.0,16.466857142857144,30.0,30.0,30.0,27.026857142857143,17.554285714285715,24.5,30.0,30.0,30.0,30.0,30.0,15.574285714285715,18.32114285714286,30.0,30.0],"symbol":["triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down"]},"mode":"markers","name":"GBPCAD","showlegend":false,"x":["2021-05-18T00:00:00+00:00","2021-05-21T00:00:00+00:00","2021-05-25T00:00:00+00:00","2021-05-26T00:00:00+00:00","2021-05-31T00:00:00+00:00","2021-06-01T00:00:00+00:00","2021-06-02T00:00:00+00:00","2021-06-07T00:00:00+00:00","2021-06-08T00:00:00+00:00","2021-06-09T00:00:00+00:00","2021-06-14T00:00:00+00:00","2021-06-16T00:00:00+00:00","2021-06-17T00:00:00+00:00","2021-06-18T00:00:00+00:00","2021-06-21T00:00:00+00:00","2021-06-23T00:00:00+00:00","2021-06-30T00:00:00+00:00","2021-07-05T00:00:00+00:00","2021-07-07T00:00:00+00:00","2021-07-13T00:00:00+00:00","2021-07-14T00:00:00+00:00","2021-07-15T00:00:00+00:00","2021-07-16T00:00:00+00:00","2021-07-19T00:00:00+00:00","2021-07-21T00:00:00+00:00","2021-07-22T00:00:00+00:00","2021-07-23T00:00:00+00:00","2021-07-26T00:00:00+00:00","2021-07-28T00:00:00+00:00","2021-07-30T00:00:00+00:00","2021-08-02T00:00:00+00:00","2021-08-04T00:00:00+00:00","2021-08-09T00:00:00+00:00","2021-08-11T00:00:00+00:00","2021-08-12T00:00:00+00:00","2021-08-16T00:00:00+00:00","2021-08-19T00:00:00+00:00","2021-08-20T00:00:00+00:00","2021-08-31T00:00:00+00:00","2021-09-01T00:00:00+00:00"],"y":[1.71128,1.70726,1.7066,1.71089,1.7132399999999999,1.70755,1.70462,1.71255,1.7139199999999999,1.70927,1.71341,1.71638,1.71949,1.72017,1.72173,1.7177,1.71437,1.70716,1.72167,1.72767,1.73236,1.7407,1.73684,1.74244,1.72183,1.72851,1.72728,1.73336,1.7405300000000001,1.73335,1.73577,1.7412999999999998,1.7408000000000001,1.73282,1.72889,1.7402199999999999,1.74874,1.7468,1.73501,1.7372800000000002],"yaxis":"y","type":"scatter"},{"hovertext":["order id: 1\u003cbr\u003eorder type: Sell\u003cbr\u003eclose probability: 1.0000\u003cbr\u003emargin: 3698.000907\u003cbr\u003eprofit: -739.218006"],"legendgroup":"g1","marker":{"color":"black","line":{"width":1.5},"size":7,"symbol":"line-ns"},"mode":"markers","name":"GBPCAD","showlegend":false,"x":["2021-05-28T00:00:00+00:00"],"y":[1.71356],"yaxis":"y","type":"scatter"},{"hovertext":["balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 9283.968684\u003cbr\u003emargin: 3698.000907\u003cbr\u003efree margin: 5585.967776\u003cbr\u003emargin level: 2.510537","balance: 10000.000000 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 3698.000907\u003cbr\u003efree margin: 5562.781087\u003cbr\u003emargin level: 2.504267","balance: 9260.781994 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9260.781994\u003cbr\u003emargin level: inf","balance: 9260.781994 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9260.781994\u003cbr\u003emargin level: inf","balance: 9260.781994 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 3077.575200\u003cbr\u003efree margin: 6055.595869\u003cbr\u003emargin level: 2.967652","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 8954.428199\u003cbr\u003emargin: 1116.475600\u003cbr\u003efree margin: 7837.952599\u003cbr\u003emargin level: 8.020263","balance: 9133.171069 USD\u003cbr\u003eequity: 8161.195144\u003cbr\u003emargin: 1126.475600\u003cbr\u003efree margin: 7034.719544\u003cbr\u003emargin level: 7.244893","balance: 9130.478014 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 1116.475600\u003cbr\u003efree margin: 7602.139544\u003cbr\u003emargin level: 7.809051","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 4731.097800\u003cbr\u003efree margin: 2539.387085\u003cbr\u003emargin level: 1.536744","balance: 7270.484885 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 7270.484885\u003cbr\u003emargin level: inf","balance: 7270.484885 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 7270.484885\u003cbr\u003emargin level: inf","balance: 7270.484885 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 6407.658100\u003cbr\u003efree margin: 3061.963459\u003cbr\u003emargin level: 1.477860","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 7446.991948\u003cbr\u003emargin: 4860.000000\u003cbr\u003efree margin: 2586.991948\u003cbr\u003emargin level: 1.532303","balance: 9469.621559 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 4860.000000\u003cbr\u003efree margin: 1317.092051\u003cbr\u003emargin level: 1.271007","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6310.851056\u003cbr\u003emargin: 710.000000\u003cbr\u003efree margin: 5600.851056\u003cbr\u003emargin level: 8.888523"],"legendgroup":"g2","line":{"color":"rgba(0.5643983083429451, 0.36993464052287583, 0.5132641291810843, 1.0)"},"mode":"lines+markers","name":"EURUSD","opacity":1.0,"x":["2021-05-05T00:00:00+00:00","2021-05-06T00:00:00+00:00","2021-05-07T00:00:00+00:00","2021-05-10T00:00:00+00:00","2021-05-11T00:00:00+00:00","2021-05-12T00:00:00+00:00","2021-05-13T00:00:00+00:00","2021-05-14T00:00:00+00:00","2021-05-17T00:00:00+00:00","2021-05-18T00:00:00+00:00","2021-05-19T00:00:00+00:00","2021-05-20T00:00:00+00:00","2021-05-21T00:00:00+00:00","2021-05-24T00:00:00+00:00","2021-05-25T00:00:00+00:00","2021-05-26T00:00:00+00:00","2021-05-27T00:00:00+00:00","2021-05-28T00:00:00+00:00","2021-05-31T00:00:00+00:00","2021-06-01T00:00:00+00:00","2021-06-02T00:00:00+00:00","2021-06-03T00:00:00+00:00","2021-06-04T00:00:00+00:00","2021-06-07T00:00:00+00:00","2021-06-08T00:00:00+00:00","2021-06-09T00:00:00+00:00","2021-06-10T00:00:00+00:00","2021-06-11T00:00:00+00:00","2021-06-14T00:00:00+00:00","2021-06-15T00:00:00+00:00","2021-06-16T00:00:00+00:00","2021-06-17T00:00:00+00:00","2021-06-18T00:00:00+00:00","2021-06-21T00:00:00+00:00","2021-06-22T00:00:00+00:00","2021-06-23T00:00:00+00:00","2021-06-24T00:00:00+00:00","2021-06-25T00:00:00+00:00","2021-06-28T00:00:00+00:00","2021-06-29T00:00:00+00:00","2021-06-30T00:00:00+00:00","2021-07-01T00:00:00+00:00","2021-07-02T00:00:00+00:00","2021-07-05T00:00:00+00:00","2021-07-06T00:00:00+00:00","2021-07-07T00:00:00+00:00","2021-07-08T00:00:00+00:00","2021-07-09T00:00:00+00:00","2021-07-12T00:00:00+00:00","2021-07-13T00:00:00+00:00","2021-07-14T00:00:00+00:00","2021-07-15T00:00:00+00:00","2021-07-16T00:00:00+00:00","2021-07-19T00:00:00+00:00","2021-07-20T00:00:00+00:00","2021-07-21T00:00:00+00:00","2021-07-22T00:00:00+00:00","2021-07-23T00:00:00+00:00","2021-07-26T00:00:00+00:00","2021-07-27T00:00:00+00:00","2021-07-28T00:00:00+00:00","2021-07-29T00:00:00+00:00","2021-07-30T00:00:00+00:00","2021-08-02T00:00:00+00:00","2021-08-03T00:00:00+00:00","2021-08-04T00:00:00+00:00","2021-08-05T00:00:00+00:00","2021-08-06T00:00:00+00:00","2021-08-09T00:00:00+00:00","2021-08-10T00:00:00+00:00","2021-08-11T00:00:00+00:00","2021-08-12T00:00:00+00:00","2021-08-13T00:00:00+00:00","2021-08-16T00:00:00+00:00","2021-08-17T00:00:00+00:00","2021-08-18T00:00:00+00:00","2021-08-19T00:00:00+00:00","2021-08-20T00:00:00+00:00","2021-08-23T00:00:00+00:00","2021-08-24T00:00:00+00:00","2021-08-25T00:00:00+00:00","2021-08-26T00:00:00+00:00","2021-08-27T00:00:00+00:00","2021-08-30T00:00:00+00:00","2021-08-31T00:00:00+00:00","2021-09-01T00:00:00+00:00","2021-09-02T00:00:00+00:00","2021-09-03T00:00:00+00:00"],"y":[1.20036,1.20646,1.21618,1.21282,1.2147000000000001,1.20705,1.20791,1.21441,1.21511,1.2221899999999999,1.21744,1.22269,1.21806,1.2215,1.22497,1.21922,1.21934,1.21896,1.2225,1.22126,1.221,1.21265,1.21662,1.21893,1.21726,1.21787,1.21751,1.21063,1.212,1.21264,1.19943,1.19069,1.18597,1.19185,1.19413,1.19258,1.19315,1.1937,1.19242,1.1896,1.1856,1.18497,1.18646,1.18634,1.18231,1.17903,1.18449,1.18774,1.18606,1.17765,1.18358,1.18118,1.18055,1.17987,1.17805,1.17946,1.17707,1.17689,1.18029,1.18165,1.18441,1.18865,1.1873,1.18688,1.18637,1.18367,1.18327,1.17611,1.17362,1.17203,1.17388,1.17296,1.17962,1.17768,1.17081,1.17108,1.16756,1.16996,1.1745700000000001,1.17555,1.17716,1.17515,1.1795499999999999,1.17962,1.18083,1.18384,1.18744,1.18772],"yaxis":"y2","type":"scatter"},{"hovertext":["order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 36.878079\u003cbr\u003emodified volume: 36.8800\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=45074.3672, order profit=-730.2028480175449, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 10.912454\u003cbr\u003emodified volume: 10.9100\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=13282.270400000001, order profit=-271.90861762448696, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 65.197127\u003cbr\u003emodified volume: 65.2000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=79719.388, order profit=-1466.506459513631, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -89.360845\u003cbr\u003emodified volume: 89.3600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=109463.3192, order profit=-1992.7468406417327, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -67.035261\u003cbr\u003emodified volume: 67.0400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=81736.50880000001, order profit=-1380.240106938193, free margin=6142.571178289072)","order id: 2\u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 2.522382\u003cbr\u003emodified volume: 2.5200\u003cbr\u003efee: 0.000246\u003cbr\u003emargin: 3077.575200\u003cbr\u003eerror: ","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 77.757471\u003cbr\u003emodified volume: 77.7600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=94295.664, order profit=-1634.9540113642695, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -95.528228\u003cbr\u003emodified volume: 95.5300\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=116223.7086, order profit=-1833.0071763142416, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 76.799113\u003cbr\u003emodified volume: 76.8000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=93613.82400000001, order profit=-1631.995882333631, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -51.628640\u003cbr\u003emodified volume: 51.6300\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=62847.133799999996, order profit=-1003.687848552428, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 30.465190\u003cbr\u003emodified volume: 30.4700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=37108.4989, order profit=-794.273581153074, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -16.787528\u003cbr\u003emodified volume: 16.7900\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=20326.477700000003, order profit=-350.43876706318474, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 83.368671\u003cbr\u003emodified volume: 83.3700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=99267.8253, order profit=-2002.6656919713498, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 13.800930\u003cbr\u003emodified volume: 13.8000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=16457.604, order profit=-317.3539691915178, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -38.775197\u003cbr\u003emodified volume: 38.7800\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=46270.357, order profit=-784.2293902419692, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 70.342129\u003cbr\u003emodified volume: 70.3400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=83874.82280000001, order profit=-1658.1587098665532, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 46.662992\u003cbr\u003emodified volume: 46.6600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=55290.70020000001, order profit=-1061.9551136715795, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 51.606610\u003cbr\u003emodified volume: 51.6100\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=61233.200600000004, order profit=-1055.1580608712748, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 13.431856\u003cbr\u003emodified volume: 13.4300\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=15834.3729, order profit=-279.1017839111942, free margin=9133.17106906657)","order id: 3\u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 0.944288\u003cbr\u003emodified volume: 0.9400\u003cbr\u003efee: 0.000222\u003cbr\u003emargin: 1116.475600\u003cbr\u003eerror: ","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 83.969299\u003cbr\u003emodified volume: 83.9700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=98887.27050000001, order profit=-1400.6509275385656, free margin=7034.719543900145)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -24.266386\u003cbr\u003emodified volume: 24.2700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=28725.4866, order profit=-493.8353448086874, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -16.617414\u003cbr\u003emodified volume: 16.6200\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=19631.2116, order profit=-349.0703283546688, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -34.123754\u003cbr\u003emodified volume: 34.1200\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=40280.365999999995, order profit=-555.7862118877156, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0001\u003cbr\u003ehold: False\u003cbr\u003evolume: 84.339069\u003cbr\u003emodified volume: 84.3400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=99274.08380000001, order profit=-2229.888299939438, free margin=8718.615143900144)","order id: 5\u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -4.023549\u003cbr\u003emodified volume: 4.0200\u003cbr\u003efee: 0.000202\u003cbr\u003emargin: 4731.097800\u003cbr\u003eerror: ","order id: 6\u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 5.413249\u003cbr\u003emodified volume: 5.4100\u003cbr\u003efee: 0.000175\u003cbr\u003emargin: 6407.658100\u003cbr\u003eerror: ","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -37.727239\u003cbr\u003emodified volume: 37.7300\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=44780.9824, order profit=-809.3825180620163, free margin=9469.621559313784)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 64.974910\u003cbr\u003emodified volume: 64.9700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=77078.4589, order profit=-1664.167229352399, free margin=9469.621559313784)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -5.158207\u003cbr\u003emodified volume: 5.1600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=6105.673200000001, order profit=-96.85386277638803, free margin=1317.0920506315852)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -33.297655\u003cbr\u003emodified volume: 33.3000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=39028.59899999999, order profit=-638.1698582363299, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -84.694809\u003cbr\u003emodified volume: 84.6900\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=99737.71919999999, order profit=-1437.1163086137208, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -35.227255\u003cbr\u003emodified volume: 35.2300\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=41257.148400000005, order profit=-943.4192913312231, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -37.106534\u003cbr\u003emodified volume: 37.1100\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=43328.151600000005, order profit=-934.8486505844377, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -31.447373\u003cbr\u003emodified volume: 31.4500\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=36795.242, order profit=-730.3434039572745, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 18.066343\u003cbr\u003emodified volume: 18.0700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=21224.479900000002, order profit=-424.2591369307219, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -79.371240\u003cbr\u003emodified volume: 79.3700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=93303.40350000001, order profit=-1817.576069120362, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -26.241041\u003cbr\u003emodified volume: 26.2400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=30951.391999999996, order profit=-526.1125267859265, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 29.680595\u003cbr\u003emodified volume: 29.6800\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=35011.1216, order profit=-570.2308165585123, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -32.379327\u003cbr\u003emodified volume: 32.3800\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=38332.7392, order profit=-502.4953644289871, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 74.938893\u003cbr\u003emodified volume: 74.9400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=88986.75360000001, order profit=-1705.9600157024627, free margin=6177.092050631586)"],"legendgroup":"g2","marker":{"color":["gray","gray","gray","gray","gray","green","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","green","gray","gray","gray","gray","gray","red","green","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray"],"size":[16.231307700111593,10.43502079740286,22.552094957897943,27.944404991376686,22.962767576341687,8.562442933955564,25.35538196205742,29.321497413005982,25.141117987217203,19.523384396875315,14.800649284772241,11.747387643299177,26.60748706502993,11.080044638328092,16.655371816982854,23.699299989854925,18.41412194379629,19.518920564066146,10.997463731358426,8.209800142031044,26.741402049305062,13.416861113929187,11.709445064421224,15.615298772445977,26.823982956274726,8.897230394643401,9.207466774880796,16.42102059450137,22.50076088059247,9.151668864766156,15.432281627269958,26.90210003043522,15.863041493354977,16.282641777417062,15.019377092421628,12.03307294308613,25.714720503195696,13.856548645632545,14.624327888809981,15.226945318048088,24.725981535964287],"symbol":["triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-up","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-up","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-up","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down"]},"mode":"markers","name":"EURUSD","showlegend":false,"x":["2021-05-18T00:00:00+00:00","2021-05-19T00:00:00+00:00","2021-05-20T00:00:00+00:00","2021-05-25T00:00:00+00:00","2021-05-26T00:00:00+00:00","2021-06-01T00:00:00+00:00","2021-06-03T00:00:00+00:00","2021-06-04T00:00:00+00:00","2021-06-07T00:00:00+00:00","2021-06-08T00:00:00+00:00","2021-06-09T00:00:00+00:00","2021-06-11T00:00:00+00:00","2021-06-17T00:00:00+00:00","2021-06-23T00:00:00+00:00","2021-06-24T00:00:00+00:00","2021-06-28T00:00:00+00:00","2021-07-01T00:00:00+00:00","2021-07-02T00:00:00+00:00","2021-07-07T00:00:00+00:00","2021-07-09T00:00:00+00:00","2021-07-13T00:00:00+00:00","2021-07-14T00:00:00+00:00","2021-07-15T00:00:00+00:00","2021-07-16T00:00:00+00:00","2021-07-22T00:00:00+00:00","2021-07-23T00:00:00+00:00","2021-07-28T00:00:00+00:00","2021-08-02T00:00:00+00:00","2021-08-03T00:00:00+00:00","2021-08-05T00:00:00+00:00","2021-08-10T00:00:00+00:00","2021-08-16T00:00:00+00:00","2021-08-18T00:00:00+00:00","2021-08-19T00:00:00+00:00","2021-08-20T00:00:00+00:00","2021-08-23T00:00:00+00:00","2021-08-24T00:00:00+00:00","2021-08-27T00:00:00+00:00","2021-08-30T00:00:00+00:00","2021-09-01T00:00:00+00:00","2021-09-02T00:00:00+00:00"],"y":[1.2221899999999999,1.21744,1.22269,1.22497,1.21922,1.22126,1.21265,1.21662,1.21893,1.21726,1.21787,1.21063,1.19069,1.19258,1.19315,1.19242,1.18497,1.18646,1.17903,1.18774,1.17765,1.18358,1.18118,1.18055,1.17707,1.17689,1.18441,1.18688,1.18637,1.18327,1.17203,1.17768,1.17108,1.16756,1.16996,1.1745700000000001,1.17555,1.1795499999999999,1.17962,1.18384,1.18744],"yaxis":"y2","type":"scatter"},{"hovertext":["order id: 2\u003cbr\u003eorder type: Buy\u003cbr\u003eclose probability: 1.0000\u003cbr\u003emargin: 3077.575200\u003cbr\u003eprofit: -127.610925","order id: 3\u003cbr\u003eorder type: Buy\u003cbr\u003eclose probability: 1.0000\u003cbr\u003emargin: 1116.475600\u003cbr\u003eprofit: -411.862870","order id: 5\u003cbr\u003eorder type: Sell\u003cbr\u003eclose probability: 1.0000\u003cbr\u003emargin: 4731.097800\u003cbr\u003eprofit: -1448.130259","order id: 6\u003cbr\u003eorder type: Buy\u003cbr\u003eclose probability: 1.0000\u003cbr\u003emargin: 6407.658100\u003cbr\u003eprofit: 2199.136674"],"legendgroup":"g2","marker":{"color":"black","line":{"width":1.5},"size":7,"symbol":"line-ns"},"mode":"markers","name":"EURUSD","showlegend":false,"x":["2021-06-02T00:00:00+00:00","2021-07-14T00:00:00+00:00","2021-07-26T00:00:00+00:00","2021-07-29T00:00:00+00:00"],"y":[1.221,1.18358,1.18029,1.18865],"yaxis":"y2","type":"scatter"},{"hovertext":["balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 10000.000000\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 10000.000000\u003cbr\u003emargin level: inf","balance: 10000.000000 USD\u003cbr\u003eequity: 9283.968684\u003cbr\u003emargin: 3698.000907\u003cbr\u003efree margin: 5585.967776\u003cbr\u003emargin level: 2.510537","balance: 10000.000000 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 3698.000907\u003cbr\u003efree margin: 5562.781087\u003cbr\u003emargin level: 2.504267","balance: 9260.781994 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9260.781994\u003cbr\u003emargin level: inf","balance: 9260.781994 USD\u003cbr\u003eequity: 9260.781994\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9260.781994\u003cbr\u003emargin level: inf","balance: 9260.781994 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 3077.575200\u003cbr\u003efree margin: 6055.595869\u003cbr\u003emargin level: 2.967652","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 9133.171069\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9133.171069\u003cbr\u003emargin level: inf","balance: 9133.171069 USD\u003cbr\u003eequity: 8954.428199\u003cbr\u003emargin: 1116.475600\u003cbr\u003efree margin: 7837.952599\u003cbr\u003emargin level: 8.020263","balance: 9133.171069 USD\u003cbr\u003eequity: 8161.195144\u003cbr\u003emargin: 1126.475600\u003cbr\u003efree margin: 7034.719544\u003cbr\u003emargin level: 7.244893","balance: 9130.478014 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 1116.475600\u003cbr\u003efree margin: 7602.139544\u003cbr\u003emargin level: 7.809051","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 8718.615144\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 8718.615144\u003cbr\u003emargin level: inf","balance: 8718.615144 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 4731.097800\u003cbr\u003efree margin: 2539.387085\u003cbr\u003emargin level: 1.536744","balance: 7270.484885 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 7270.484885\u003cbr\u003emargin level: inf","balance: 7270.484885 USD\u003cbr\u003eequity: 7270.484885\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 7270.484885\u003cbr\u003emargin level: inf","balance: 7270.484885 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 6407.658100\u003cbr\u003efree margin: 3061.963459\u003cbr\u003emargin level: 1.477860","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 9469.621559\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 9469.621559\u003cbr\u003emargin level: inf","balance: 9469.621559 USD\u003cbr\u003eequity: 7446.991948\u003cbr\u003emargin: 4860.000000\u003cbr\u003efree margin: 2586.991948\u003cbr\u003emargin level: 1.532303","balance: 9469.621559 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 4860.000000\u003cbr\u003efree margin: 1317.092051\u003cbr\u003emargin level: 1.271007","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6177.092051\u003cbr\u003emargin: 0.000000\u003cbr\u003efree margin: 6177.092051\u003cbr\u003emargin level: inf","balance: 6177.092051 USD\u003cbr\u003eequity: 6310.851056\u003cbr\u003emargin: 710.000000\u003cbr\u003efree margin: 5600.851056\u003cbr\u003emargin level: 8.888523"],"legendgroup":"g3","line":{"color":"rgba(0.7372549019607844, 0.7411764705882353, 0.13333333333333333, 1.0)"},"mode":"lines+markers","name":"USDJPY","opacity":1.0,"x":["2021-05-05T00:00:00+00:00","2021-05-06T00:00:00+00:00","2021-05-07T00:00:00+00:00","2021-05-10T00:00:00+00:00","2021-05-11T00:00:00+00:00","2021-05-12T00:00:00+00:00","2021-05-13T00:00:00+00:00","2021-05-14T00:00:00+00:00","2021-05-17T00:00:00+00:00","2021-05-18T00:00:00+00:00","2021-05-19T00:00:00+00:00","2021-05-20T00:00:00+00:00","2021-05-21T00:00:00+00:00","2021-05-24T00:00:00+00:00","2021-05-25T00:00:00+00:00","2021-05-26T00:00:00+00:00","2021-05-27T00:00:00+00:00","2021-05-28T00:00:00+00:00","2021-05-31T00:00:00+00:00","2021-06-01T00:00:00+00:00","2021-06-02T00:00:00+00:00","2021-06-03T00:00:00+00:00","2021-06-04T00:00:00+00:00","2021-06-07T00:00:00+00:00","2021-06-08T00:00:00+00:00","2021-06-09T00:00:00+00:00","2021-06-10T00:00:00+00:00","2021-06-11T00:00:00+00:00","2021-06-14T00:00:00+00:00","2021-06-15T00:00:00+00:00","2021-06-16T00:00:00+00:00","2021-06-17T00:00:00+00:00","2021-06-18T00:00:00+00:00","2021-06-21T00:00:00+00:00","2021-06-22T00:00:00+00:00","2021-06-23T00:00:00+00:00","2021-06-24T00:00:00+00:00","2021-06-25T00:00:00+00:00","2021-06-28T00:00:00+00:00","2021-06-29T00:00:00+00:00","2021-06-30T00:00:00+00:00","2021-07-01T00:00:00+00:00","2021-07-02T00:00:00+00:00","2021-07-05T00:00:00+00:00","2021-07-06T00:00:00+00:00","2021-07-07T00:00:00+00:00","2021-07-08T00:00:00+00:00","2021-07-09T00:00:00+00:00","2021-07-12T00:00:00+00:00","2021-07-13T00:00:00+00:00","2021-07-14T00:00:00+00:00","2021-07-15T00:00:00+00:00","2021-07-16T00:00:00+00:00","2021-07-19T00:00:00+00:00","2021-07-20T00:00:00+00:00","2021-07-21T00:00:00+00:00","2021-07-22T00:00:00+00:00","2021-07-23T00:00:00+00:00","2021-07-26T00:00:00+00:00","2021-07-27T00:00:00+00:00","2021-07-28T00:00:00+00:00","2021-07-29T00:00:00+00:00","2021-07-30T00:00:00+00:00","2021-08-02T00:00:00+00:00","2021-08-03T00:00:00+00:00","2021-08-04T00:00:00+00:00","2021-08-05T00:00:00+00:00","2021-08-06T00:00:00+00:00","2021-08-09T00:00:00+00:00","2021-08-10T00:00:00+00:00","2021-08-11T00:00:00+00:00","2021-08-12T00:00:00+00:00","2021-08-13T00:00:00+00:00","2021-08-16T00:00:00+00:00","2021-08-17T00:00:00+00:00","2021-08-18T00:00:00+00:00","2021-08-19T00:00:00+00:00","2021-08-20T00:00:00+00:00","2021-08-23T00:00:00+00:00","2021-08-24T00:00:00+00:00","2021-08-25T00:00:00+00:00","2021-08-26T00:00:00+00:00","2021-08-27T00:00:00+00:00","2021-08-30T00:00:00+00:00","2021-08-31T00:00:00+00:00","2021-09-01T00:00:00+00:00","2021-09-02T00:00:00+00:00","2021-09-03T00:00:00+00:00"],"y":[109.188,109.09,108.604,108.81,108.615,109.699,109.453,109.362,109.209,108.888,109.227,108.767,108.945,108.74,108.747,109.139,109.808,109.872,109.556,109.467,109.547,110.276,109.524,109.238,109.492,109.618,109.319,109.682,110.071,110.056,110.708,110.221,110.211,110.314,110.658,110.949,110.874,110.778,110.614,110.538,111.101,111.521,111.02,110.962,110.61,110.608,109.748,110.102,110.349,110.627,109.95,109.831,110.081,109.447,109.843,110.286,110.149,110.547,110.381,109.774,109.909,109.47,109.656,109.305,109.042,109.473,109.761,110.217,110.267,110.56,110.428,110.386,109.592,109.243,109.595,109.763,109.763,109.799,109.694,109.679,110.023,110.081,109.85,109.913,110.007,110.025,109.937,109.712],"yaxis":"y3","type":"scatter"},{"hovertext":["order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 96.218413\u003cbr\u003emodified volume: 96.2200\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=96220.0, order profit=-1932.2827258794114, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -96.922253\u003cbr\u003emodified volume: 96.9200\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=96920.0, order profit=-1601.676200721704, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 25.710303\u003cbr\u003emodified volume: 25.7100\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=25710.0, order profit=-469.44036699738007, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0008\u003cbr\u003ehold: False\u003cbr\u003evolume: 11.191361\u003cbr\u003emodified volume: 11.1900\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=11190.0, order profit=-210.255286608943, free margin=10000.0)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -71.663876\u003cbr\u003emodified volume: 71.6600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=71660.0, order profit=-1452.6156679646724, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -10.261091\u003cbr\u003emodified volume: 10.2600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=10260.0, order profit=-173.80063472530728, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 17.340621\u003cbr\u003emodified volume: 17.3400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=17340.0, order profit=-391.31651383684505, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 66.278334\u003cbr\u003emodified volume: 66.2800\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=66280.0, order profit=-1285.8993301630694, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 23.017100\u003cbr\u003emodified volume: 23.0200\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=23020.0, order profit=-519.8851713503798, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -66.134658\u003cbr\u003emodified volume: 66.1300\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=66130.0, order profit=-1268.4588834292008, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 22.233832\u003cbr\u003emodified volume: 22.2300\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=22230.0, order profit=-376.5612694819457, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 14.811908\u003cbr\u003emodified volume: 14.8100\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=14810.0, order profit=-222.6880942116937, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 72.609951\u003cbr\u003emodified volume: 72.6100\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=72610.0, order profit=-1229.97100074908, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 31.079908\u003cbr\u003emodified volume: 31.0800\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=31080.0, order profit=-740.6825727245432, free margin=9133.17106906657)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -56.942676\u003cbr\u003emodified volume: 56.9400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=56940.0, order profit=-823.5596716955971, free margin=9133.17106906657)","order id: 4\u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -0.007126\u003cbr\u003emodified volume: 0.0100\u003cbr\u003efee: 0.019925\u003cbr\u003emargin: 10.000000\u003cbr\u003eerror: ","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 99.156797\u003cbr\u003emodified volume: 99.1600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=99160.0, order profit=-1832.0810960940062, free margin=7044.719543900145)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -98.940101\u003cbr\u003emodified volume: 98.9400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=98940.0, order profit=-1952.2437869850569, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 30.103597\u003cbr\u003emodified volume: 30.1000\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=30100.0, order profit=-630.0386395454439, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 97.055818\u003cbr\u003emodified volume: 97.0600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=97059.99999999999, order profit=-1825.4355159167726, free margin=8718.615143900144)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -32.970361\u003cbr\u003emodified volume: 32.9700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=32970.0, order profit=-763.3781665596365, free margin=7270.484885182672)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -10.318299\u003cbr\u003emodified volume: 10.3200\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=10320.0, order profit=-146.60709489966226, free margin=7270.484885182672)","order id: 7\u003cbr\u003ehold probability: 0.0024\u003cbr\u003ehold: False\u003cbr\u003evolume: -4.856513\u003cbr\u003emodified volume: 4.8600\u003cbr\u003efee: 0.024604\u003cbr\u003emargin: 4860.000000\u003cbr\u003eerror: ","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 65.358478\u003cbr\u003emodified volume: 65.3600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=65360.0, order profit=-1026.0932623619235, free margin=2586.9919483369367)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -55.107951\u003cbr\u003emodified volume: 55.1100\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=55110.0, order profit=-915.0491955810827, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 22.879653\u003cbr\u003emodified volume: 22.8800\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=22880.000000000004, order profit=-376.2821498584307, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -9.473643\u003cbr\u003emodified volume: 9.4700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=9470.0, order profit=-224.20348470731554, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -74.493514\u003cbr\u003emodified volume: 74.4900\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=74489.99999999999, order profit=-1520.6989086500314, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 57.773984\u003cbr\u003emodified volume: 57.7700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=57770.0, order profit=-1160.2326949011385, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 17.369271\u003cbr\u003emodified volume: 17.3700\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=17370.0, order profit=-311.2250939749236, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: 32.910656\u003cbr\u003emodified volume: 32.9100\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=32910.00000000001, order profit=-573.7785918660708, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -49.939284\u003cbr\u003emodified volume: 49.9400\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=49940.0, order profit=-953.0984805297883, free margin=6177.092050631586)","order id: \u003cbr\u003ehold probability: 0.0000\u003cbr\u003ehold: False\u003cbr\u003evolume: -60.160658\u003cbr\u003emodified volume: 60.1600\u003cbr\u003efee: nan\u003cbr\u003emargin: nan\u003cbr\u003eerror: low free margin (order margin=60160.0, order profit=-1004.1606725771597, free margin=6177.092050631586)","order id: 8\u003cbr\u003ehold probability: 0.0035\u003cbr\u003ehold: False\u003cbr\u003evolume: -0.708085\u003cbr\u003emodified volume: 0.7100\u003cbr\u003efee: 0.018310\u003cbr\u003emargin: 710.000000\u003cbr\u003eerror: "],"legendgroup":"g3","marker":{"color":["gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","red","gray","gray","gray","gray","gray","gray","red","gray","gray","gray","gray","gray","gray","gray","gray","gray","gray","red"],"size":[29.34126424034681,29.496521826797057,13.7023893537655,10.481903417683235,23.89394092146386,10.275632624256477,11.84595221292469,22.700675471317673,13.105756628692408,22.667405988506903,12.930537352555701,11.284806936183083,24.10464764593205,14.893436838390967,20.629095674967235,8.002217965520718,29.993346103437844,29.944550861982055,14.67607621736062,29.527573344087106,15.312632321806635,10.288940417380784,9.077931243068857,22.496622643411634,20.223207984675874,13.07470511140236,10.10041334811977,24.521625163827,20.813186813186814,11.852606109486844,15.299324528682327,19.076519810464767,21.34328057263837,8.157475551970965],"symbol":["triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down","triangle-down"]},"mode":"markers","name":"USDJPY","showlegend":false,"x":["2021-05-19T00:00:00+00:00","2021-05-21T00:00:00+00:00","2021-05-24T00:00:00+00:00","2021-05-25T00:00:00+00:00","2021-06-02T00:00:00+00:00","2021-06-10T00:00:00+00:00","2021-06-11T00:00:00+00:00","2021-06-16T00:00:00+00:00","2021-06-18T00:00:00+00:00","2021-06-21T00:00:00+00:00","2021-06-23T00:00:00+00:00","2021-06-28T00:00:00+00:00","2021-06-30T00:00:00+00:00","2021-07-01T00:00:00+00:00","2021-07-06T00:00:00+00:00","2021-07-12T00:00:00+00:00","2021-07-13T00:00:00+00:00","2021-07-14T00:00:00+00:00","2021-07-19T00:00:00+00:00","2021-07-21T00:00:00+00:00","2021-07-26T00:00:00+00:00","2021-07-27T00:00:00+00:00","2021-08-03T00:00:00+00:00","2021-08-04T00:00:00+00:00","2021-08-05T00:00:00+00:00","2021-08-12T00:00:00+00:00","2021-08-17T00:00:00+00:00","2021-08-24T00:00:00+00:00","2021-08-25T00:00:00+00:00","2021-08-26T00:00:00+00:00","2021-08-30T00:00:00+00:00","2021-08-31T00:00:00+00:00","2021-09-01T00:00:00+00:00","2021-09-02T00:00:00+00:00"],"y":[109.227,108.945,108.74,108.747,109.547,109.319,109.682,110.708,110.211,110.314,110.949,110.614,111.101,111.521,110.61,110.349,110.627,109.95,109.447,110.286,110.381,109.774,109.042,109.473,109.761,110.386,109.595,109.679,110.023,110.081,109.913,110.007,110.025,109.937],"yaxis":"y3","type":"scatter"},{"hovertext":["order id: 4\u003cbr\u003eorder type: Sell\u003cbr\u003eclose probability: 1.0000\u003cbr\u003emargin: 10.000000\u003cbr\u003eprofit: -2.693055","order id: 7\u003cbr\u003eorder type: Sell\u003cbr\u003eclose probability: 1.0000\u003cbr\u003emargin: 4860.000000\u003cbr\u003eprofit: -3292.529509"],"legendgroup":"g3","marker":{"color":"black","line":{"width":1.5},"size":7,"symbol":"line-ns"},"mode":"markers","name":"USDJPY","showlegend":false,"x":["2021-07-13T00:00:00+00:00","2021-08-05T00:00:00+00:00"],"y":[110.627,109.761],"yaxis":"y3","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"marker":{"line":{"color":"#283442"}},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#f2f5fa"},"error_y":{"color":"#f2f5fa"},"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"marker":{"line":{"color":"#283442"}},"type":"scattergl"}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"baxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#506784"},"line":{"color":"rgb(17,17,17)"}},"header":{"fill":{"color":"#2a3f5f"},"line":{"color":"rgb(17,17,17)"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#f2f5fa"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"rgb(17,17,17)","plot_bgcolor":"rgb(17,17,17)","polar":{"bgcolor":"rgb(17,17,17)","angularaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"radialaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"ternary":{"bgcolor":"rgb(17,17,17)","aaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"baxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"caxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3","gridwidth":2},"yaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3","gridwidth":2},"zaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3","gridwidth":2}},"shapedefaults":{"line":{"color":"#f2f5fa"}},"annotationdefaults":{"arrowcolor":"#f2f5fa","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"rgb(17,17,17)","landcolor":"rgb(17,17,17)","subunitcolor":"#506784","showland":true,"showlakes":true,"lakecolor":"rgb(17,17,17)"},"title":{"x":0.05},"updatemenudefaults":{"bgcolor":"#506784","borderwidth":0},"sliderdefaults":{"bgcolor":"#C8D4E3","borderwidth":1,"bordercolor":"rgb(17,17,17)","tickwidth":0},"mapbox":{"style":"dark"}}},"yaxis":{"tickfont":{"color":"rgba(0.12156862745098039, 0.4666666666666667, 0.7058823529411765, 0.8)"}},"yaxis2":{"tickfont":{"color":"rgba(0.5643983083429451, 0.36993464052287583, 0.5132641291810843, 0.8)"},"overlaying":"y"},"yaxis3":{"tickfont":{"color":"rgba(0.7372549019607844, 0.7411764705882353, 0.13333333333333333, 0.8)"},"overlaying":"y"},"xaxis":{"tickformat":"%Y-%m-%d"},"title":{"text":"Balance: 6177.092051 USD ~ Equity: 6310.851056 ~ Margin: 710.000000 ~ Free Margin: 5600.851056 ~ Margin Level: 8.888523"},"width":1400,"height":600},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('e718860f-05bb-40c2-895b-29eef67d9382');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div></div></div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="time_series_analysis.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ARIMA for Time Series Analysis</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Reinforcement Learning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-concepts">Theoretical concepts</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#markov-decision-process">1. Markov Decision Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reward-and-evaluation-function">2. Reward and evaluation function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-rl-algorithms">3. Common RL algorithms</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#use-of-rl-in-finance">Use of RL in finance</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-implementation">Practical implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction-to-financial-market-simulation-with-gym-mtsim">Introduction to Financial Market Simulation with Gym-MTSim</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-a-reinforcement-learning-environment-for-forex-trading-with-gym-mtsim">Setting Up a Reinforcement Learning Environment for Forex Trading with Gym-MTSim</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By André Ramolivaz, Alberto Tomasin, Simone Dinato
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1001 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>ARIMA for Time Series Analysis &#8212; Stock Forecast</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/time_series_analysis';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reinforcement Learning" href="reinforcement_learning.html" />
+    <link rel="prev" title="Supervised Learning" href="supervised_learning.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Stock Forecast - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Stock Forecast - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Introduction
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Preparation and Analysis</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="data_retrivial.html">Data Retrivial</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="data_preprocessing.html">Data Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploratory_data_analysis.html">Exploratory Data Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Modeling</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="supervised_learning.html">Supervised Learning</a></li>
+
+
+
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">ARIMA for Time Series Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reinforcement_learning.html">Reinforcement Learning</a></li>
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/andreramolivaz/CT0590/tree/data-model" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/andreramolivaz/CT0590/tree/data-model/issues/new?title=Issue%20on%20page%20%2Fnotebooks/time_series_analysis.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/time_series_analysis.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>ARIMA for Time Series Analysis</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-application-with-amzn-stock">An Application with AMZN stock</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stl-decomposition">STL Decomposition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-for-stationarity">Check for Stationarity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#acf-and-pacf-plots">ACF and PACF plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#train-test-split">Train &amp; Test Split</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-arima">Fitting ARIMA</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-diagnostics">Model Diagnostics</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-output-interpretation">Summary Output Interpretation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-tests">Diagnostic Tests:</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#forecast-plot-interpretation">Forecast Plot Interpretation:</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-analysis-and-possible-recommendations">Final Analysis and Possible Recommendations</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="arima-for-time-series-analysis">
+<h1>ARIMA for Time Series Analysis<a class="headerlink" href="#arima-for-time-series-analysis" title="Permalink to this heading">#</a></h1>
+<p><strong>ARIMA (Autoregressive Integrated Moving Average)</strong> is a statistical analysis model that is used to forecast time series data. It’s particularly <code class="docutils literal notranslate"><span class="pre">useful</span> <span class="pre">in</span> <span class="pre">understanding</span> <span class="pre">and</span> <span class="pre">predicting</span> <span class="pre">time</span> <span class="pre">series</span> <span class="pre">data</span> <span class="pre">showing</span> <span class="pre">some</span> <span class="pre">form</span> <span class="pre">of</span> <span class="pre">linear</span> <span class="pre">trend</span> <span class="pre">or</span> <span class="pre">seasonal</span> <span class="pre">patterns</span></code>.</p>
+<p>ARIMA models are characterized by three parameters: (<code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">q</span></code>) each of which technique contributes to the final forecast as part of the class of linear model of ARIMA.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Autoregressive</span> <span class="pre">(AR)</span>&#160; <span class="pre">p</span></code>: This part leverages the idea that past stock prices can influence future prices. This is based on the premise that stock market performance is somewhat consistent over time, although not perfectly predictable. <strong>In an autoregression model, we forecast the variable of interest using a linear combination of past values of that variable</strong>. The term autoregression indicates that it is a regression of the variable against itself. That is, we use lagged values of the target variable as our input variables to forecast values for the future. An autoregression model of order p will look like: <span class="math notranslate nohighlight">\(Y_t = c + \phi_1 Y_{t-1} + \phi_2 Y_{t-2} + ... + \phi_p Y_{t-p} + \epsilon_t\)</span> In the  equation, the currently observed value of Y is a linear function of its past p values. [ 0, p] are the regression coefficients that are determined after training. There are some standard methods to determine optimal values of p one of which is, analyzing Autocorrelation and Partial Autocorrelation function plots.  (those plot help determine past value dependency which in turn helps us deduce p in AR.)</p>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">autocorrelation</span> <span class="pre">function</span> <span class="pre">(ACF)</span></code> is the correlation between the current and the past values of the same variable. It also considers the translative effect that values carry over with time apart from a direct effect. For example, prices of oil 2 days ago will affect prices 1 day ago and eventually, today. But the prices of oil 2 days ago might also have an effect on today which ACF measures.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Partial</span> <span class="pre">Autocorrelation</span> <span class="pre">(PACF)</span></code> on the other hand measures only the direct correlation between past values and current values. For example, PACF will only measure the effect of prices of oil 2 days ago on today with no translative effect.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Integrated</span> <span class="pre">(I)</span>&#160; <span class="pre">d</span></code>: <strong>This represents differencing the observations to make the time series stationary</strong>. A stationary time series has properties that do not depend on the time at which the series is observed. Differencing helps in removing trends or seasonal structures in the stock prices, making the time series more predictable. A differencing factor, d=1 means a lag of i.e.Yt-Yt-1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Moving</span> <span class="pre">Average</span> <span class="pre">(MA)</span>&#160; <span class="pre">q</span></code>: <strong>This part accounts for the possibility that past prediction errors can influence future stock prices</strong>. It helps to smooth out short-term fluctuations and highlight longer-term trends or cycles. Equation: <span class="math notranslate nohighlight">\(Y_t = \mu + \epsilon_t + \theta_1 \epsilon_{t-1} + \theta_2 \epsilon_{t-2} + ... + \theta_q \epsilon_{t-q}\)</span> Where <span class="math notranslate nohighlight">\(\mu\)</span> is the mean of the series, and <span class="math notranslate nohighlight">\(\theta\)</span> are the parameters of the model while <span class="math notranslate nohighlight">\(\epsilon_t\)</span>, is called an error and it represents the random residual deviations between the model and the target variable. Since <span class="math notranslate nohighlight">\(\epsilon_t\)</span> can only be determined after fitting the model and since it’s a parameter too so in this case <span class="math notranslate nohighlight">\(\epsilon_t\)</span> is an unobservable parameter.</p></li>
+</ul>
+<section id="an-application-with-amzn-stock">
+<h2>An Application with AMZN stock<a class="headerlink" href="#an-application-with-amzn-stock" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.stattools</span> <span class="kn">import</span> <span class="n">adfuller</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tools.eval_measures</span> <span class="kn">import</span> <span class="n">rmse</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.arima.model</span> <span class="kn">import</span> <span class="n">ARIMA</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="kn">from</span> <span class="nn">statsmodels.graphics.tsaplots</span> <span class="kn">import</span> <span class="n">plot_acf</span><span class="p">,</span> <span class="n">plot_pacf</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;final_dataset.xlsx&#39;</span><span class="p">)</span>
+<span class="n">amzn_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;AMZN&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">amzn_data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">amzn_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Closing Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;AMZN Closing Price Over Time&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Closing Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/5975bfc65af2b41825878c9f3d85712943ffd2d2131c3622bb08f238519e3a4a.png" src="../_images/5975bfc65af2b41825878c9f3d85712943ffd2d2131c3622bb08f238519e3a4a.png" />
+</div>
+</div>
+<p>In analyzing the historical closing prices of a stock, it is often important to ensure that the data used to train a predictive model like an ARIMA model is representative of the underlying process we are trying to model. After examination of the stock’s closing price data, I chose to truncate the dataset at January 2022 because the behavior of the stock after 2022 may have been influenced by exceptional <code class="docutils literal notranslate"><span class="pre">market</span> <span class="pre">conditions</span> <span class="pre">that</span> <span class="pre">are</span> <span class="pre">not</span> <span class="pre">expected</span> <span class="pre">to</span> <span class="pre">be</span> <span class="pre">indicative</span> <span class="pre">of</span> <span class="pre">future</span> <span class="pre">trends</span></code>. For example, the economic impact of the COVID-19 pandemic caused unprecedented volatility in stock prices, which could introduce noise and bias into our model. By focusing on the post-2022 period, I aim to capture more normal market conditions that are more likely to persist into the future.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;AMZN&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="s1">&#39;2022-01-01&#39;</span><span class="p">)]</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+<span class="n">time_series_data</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">time_series_data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Close Price Over Time&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Close Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f9ca7996491026026a0864f97851508d10a1e38418aace5cb95be855d659fcb3.png" src="../_images/f9ca7996491026026a0864f97851508d10a1e38418aace5cb95be855d659fcb3.png" />
+</div>
+</div>
+<section id="stl-decomposition">
+<h3>STL Decomposition<a class="headerlink" href="#stl-decomposition" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Perform STL decomposition</span>
+<span class="n">stl</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">STL</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">stl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># Plot the decomposed components</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/add23848fcdc8de4b613bf88fe734077f22ed353a28ec81239cecdf1795085a9.png" src="../_images/add23848fcdc8de4b613bf88fe734077f22ed353a28ec81239cecdf1795085a9.png" />
+</div>
+</div>
+<ul class="simple">
+<li><p><strong>Trend Analysis</strong>: No strong long-term trend is observed, meaning that the time series does not show a consistent direction of growth or decline over the period captured in the data.</p></li>
+<li><p><strong>Seasonality Analysis</strong>: Clear weekly patterns are present, indicating that the time series is influenced by factors that repeat on a weekly basis.</p></li>
+<li><p><strong>Residual Analysis</strong>: The residuals do not show any particular structure, indicating that the model has captured the main characteristics of the time series data. There are no obvious outliers or patterns in the residuals, which is an indication of a good fit for the components chosen.</p></li>
+</ul>
+</section>
+<section id="check-for-stationarity">
+<h3>Check for Stationarity<a class="headerlink" href="#check-for-stationarity" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">adf_test</span><span class="p">(</span><span class="n">timeseries</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results of Dickey-Fuller Test:&#39;</span><span class="p">)</span>
+    <span class="n">dftest</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">timeseries</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="s1">&#39;AIC&#39;</span><span class="p">)</span>
+    <span class="n">dfoutput</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">dftest</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Test Statistic&#39;</span><span class="p">,</span><span class="s1">&#39;p-value&#39;</span><span class="p">,</span><span class="s1">&#39;#Lags Used&#39;</span><span class="p">,</span><span class="s1">&#39;Number of Observations Used&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dftest</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">dfoutput</span><span class="p">[</span><span class="s1">&#39;Critical Value (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dfoutput</span><span class="p">)</span>
+
+<span class="c1"># Apply ADF test on the series</span>
+<span class="n">adf_test</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">])</span>
+<span class="c1"># Calculate the rolling mean and rolling standard deviation</span>
+<span class="n">rolling_mean</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">rolling_std</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Original Series&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rolling_mean</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Rolling Mean&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rolling_std</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Rolling Std Dev&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rolling Mean &amp; Standard Deviation&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Closing Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Results of Dickey-Fuller Test:
+Test Statistic                  -4.155813
+p-value                          0.000782
+#Lags Used                       0.000000
+Number of Observations Used    380.000000
+Critical Value (1%)             -3.447676
+Critical Value (5%)             -2.869176
+Critical Value (10%)            -2.570838
+dtype: float64
+</pre></div>
+</div>
+<img alt="../_images/3969a54148519a14b0084fabca9e58435d1ac3a9a43d8113ba0255d0952b6491.png" src="../_images/3969a54148519a14b0084fabca9e58435d1ac3a9a43d8113ba0255d0952b6491.png" />
+</div>
+</div>
+<ol class="arabic simple">
+<li><p><strong>Test Statistic</strong>: The more negative this statistic, the more likely we are to reject the null hypothesis (which states that the series is non-stationary).</p></li>
+<li><p><strong>p-value</strong>: A p-value below a threshold (commonly 0.05) suggests that the series is stationary.</p></li>
+<li><p><strong>Critical Values</strong>: These values correspond to different levels of confidence. If the test statistic is less (more negative) than the critical value, the null hypothesis can be rejected. The test statistic of -4.155813 is lower than all the critical value thresholds (1%, 5%, 10%).</p></li>
+<li><p><strong>Original Series</strong>: This represents the actual closing prices over time. It shows fluctuations, which is typical for financial time series data.</p></li>
+<li><p><strong>Rolling Mean</strong>: The rolling mean appears to be relatively constant over time, with no clear trend upwards or downwards. This suggests that the mean of the series does not change much over time, which is a characteristic of a stationary time series.</p></li>
+<li><p><strong>Rolling Standard Deviation</strong>: The rolling standard deviation is quite flat and low, indicating that the volatility of the closing price is relatively constant over the time period shown. This also supports the stationarity of the time series because the spread of the closing prices (volatility) isn’t varying over time.</p></li>
+</ol>
+<p>Both the rolling mean and rolling standard deviation lines being relatively flat and not showing distinct patterns over time (like a consistent upward or downward trend) is a visual indicator that the series could be stationary. This visual interpretation aligns with the results of the Augmented Dickey-Fuller test you provided earlier, which had a low p-value, <strong>allowing us to reject the null hypothesis and conclude that the series is stationary</strong>.</p>
+<p>The flatness of the rolling standard deviation, in particular, is a good sign, as it suggests that the series’ volatility is not dependent on time, which is another indicator of stationarity.</p>
+</section>
+<section id="acf-and-pacf-plots">
+<h3>ACF and PACF plots<a class="headerlink" href="#acf-and-pacf-plots" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">lags</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;ACF for Original Series&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plot_pacf</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">lags</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PACF for Original Series&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/0eb3bf4cada84149d38a1ecdf2ea9a59080212ae46595d8c8b208732f6de7143.png" src="../_images/0eb3bf4cada84149d38a1ecdf2ea9a59080212ae46595d8c8b208732f6de7143.png" />
+<img alt="../_images/a9ab0b22dc17aead1ec05dea204454dc926589c94c4eadead1a48c8124a45be9.png" src="../_images/a9ab0b22dc17aead1ec05dea204454dc926589c94c4eadead1a48c8124a45be9.png" />
+</div>
+</div>
+<p><strong><code class="docutils literal notranslate"><span class="pre">ACF</span></code> for Original Series</strong>:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">ACF</span></code> plot shows the correlation of the time series with its own lags, up to 40 lags (based on the x-axis).</p></li>
+<li><p>The slow decay of the autocorrelation values as the lag increases suggests that there’s a long-term positive autocorrelation.</p></li>
+<li><p>Since the <code class="docutils literal notranslate"><span class="pre">ACF</span></code> tailing off slowly and the series has been found to be stationary, it indicates that the series might be better explained by an ARIMA model rather than a simple <code class="docutils literal notranslate"><span class="pre">AR</span></code> or <code class="docutils literal notranslate"><span class="pre">MA</span></code> model.</p></li>
+</ul>
+<p><strong><code class="docutils literal notranslate"><span class="pre">PACF</span></code> for Original Series</strong>:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">PACF</span></code> plot shows the partial correlation of the series with its own lags, controlling for the values of the intermediate lags.</p></li>
+<li><p>The sharp cut-off after the first lag in the <code class="docutils literal notranslate"><span class="pre">PACF</span></code> plot indicates that a lag-1 term is significant in the series.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">PACF</span></code> being significant at the first lag and then cutting off suggests an AR(1) component might be a good starting point for the AR part of an ARIMA model.</p></li>
+</ul>
+</section>
+<section id="train-test-split">
+<h3>Train &amp; Test Split<a class="headerlink" href="#train-test-split" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Suppose we keep the last 20% of observations for testing</span>
+<span class="n">split_ratio</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">split_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">split_ratio</span><span class="p">)</span>
+
+<span class="n">train_data</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">][:</span><span class="n">split_idx</span><span class="p">]</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">][</span><span class="n">split_idx</span><span class="p">:]</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train_data</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">test_data</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>304 77
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="fitting-arima">
+<h3>Fitting ARIMA<a class="headerlink" href="#fitting-arima" title="Permalink to this heading">#</a></h3>
+<p>The ACF showing a slow decay could mean that there is an autoregressive component in the data.
+The PACF cutting off after lag 1 suggests that an AR(1) term is likely important in the data.
+Combining this information with the stationarity results, we start with an ARIMA model with 1 autoregressive term (p=1), potentially no differencing (d=0 since the data is stationary), and then determine the moving average part (q) based on the significance of the lags in the ACF plot</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fit the ARIMA model (assuming the order (1,0,0) based on the PACF and ACF analysis)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">fitted_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                               SARIMAX Results                                
+==============================================================================
+Dep. Variable:                  Close   No. Observations:                  304
+Model:                 ARIMA(1, 0, 0)   Log Likelihood                -766.529
+Date:                Sat, 27 Jan 2024   AIC                           1539.058
+Time:                        21:49:26   BIC                           1550.209
+Sample:                             0   HQIC                          1543.519
+                                - 304                                         
+Covariance Type:                  opg                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const        161.8103      2.812     57.543      0.000     156.299     167.322
+ar.L1          0.9460      0.016     59.180      0.000       0.915       0.977
+sigma2         9.0039      0.567     15.878      0.000       7.892      10.115
+===================================================================================
+Ljung-Box (L1) (Q):                   0.02   Jarque-Bera (JB):                40.21
+Prob(Q):                              0.88   Prob(JB):                         0.00
+Heteroskedasticity (H):               0.40   Skew:                            -0.13
+Prob(H) (two-sided):                  0.00   Kurtosis:                         4.76
+===================================================================================
+
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="model-diagnostics">
+<h3>Model Diagnostics<a class="headerlink" href="#model-diagnostics" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Forecast the next steps ahead in the future</span>
+<span class="n">forecast_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">fitted_model</span><span class="o">.</span><span class="n">get_forecast</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="n">forecast_steps</span><span class="p">)</span>
+<span class="n">forecast_index</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">index</span>
+<span class="n">forecast_mean</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">predicted_mean</span>
+
+<span class="c1"># Confidence intervals for the forecasts</span>
+<span class="n">confidence_intervals</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span>
+
+<span class="c1"># Plot the training data, test data and the forecast</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Training Data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Test Data&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">forecast_index</span><span class="p">,</span> <span class="n">forecast_mean</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Forecast&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot the confidence intervals</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">forecast_index</span><span class="p">,</span> <span class="n">confidence_intervals</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">confidence_intervals</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;pink&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;ARIMA Forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Closing Price&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/4cb36797a1d91d90f3890eba02ebff30ce205653276edb725b0749d538cb8a23.png" src="../_images/4cb36797a1d91d90f3890eba02ebff30ce205653276edb725b0749d538cb8a23.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                               SARIMAX Results                                
+==============================================================================
+Dep. Variable:                  Close   No. Observations:                  304
+Model:                 ARIMA(1, 0, 0)   Log Likelihood                -766.529
+Date:                Sat, 27 Jan 2024   AIC                           1539.058
+Time:                        21:49:26   BIC                           1550.209
+Sample:                             0   HQIC                          1543.519
+                                - 304                                         
+Covariance Type:                  opg                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const        161.8103      2.812     57.543      0.000     156.299     167.322
+ar.L1          0.9460      0.016     59.180      0.000       0.915       0.977
+sigma2         9.0039      0.567     15.878      0.000       7.892      10.115
+===================================================================================
+Ljung-Box (L1) (Q):                   0.02   Jarque-Bera (JB):                40.21
+Prob(Q):                              0.88   Prob(JB):                         0.00
+Heteroskedasticity (H):               0.40   Skew:                            -0.13
+Prob(H) (two-sided):                  0.00   Kurtosis:                         4.76
+===================================================================================
+
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
+</pre></div>
+</div>
+</div>
+</div>
+<section id="summary-output-interpretation">
+<h4>Summary Output Interpretation<a class="headerlink" href="#summary-output-interpretation" title="Permalink to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Model Information: The model used is an ARIMA(1, 0, 0), which means it has one autoregressive term and no differencing or moving average components. This aligns with the earlier analysis based on the ACF and PACF plots.</p></li>
+<li><p>Coefficients:</p>
+<ul>
+<li><p>const: The coefficient for the constant term is significant, with a very low p-value (close to 0), suggesting that the model includes a constant term in the prediction.</p></li>
+<li><p>ar.L1: The coefficient for the first lag is also significant with a p-value close to 0, confirming that the past value is useful in predicting the future value in the series.</p></li>
+<li><p>sigma2: Represents the variance of the residuals. The lower this value, the better the model fits your data.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="diagnostic-tests">
+<h4>Diagnostic Tests:<a class="headerlink" href="#diagnostic-tests" title="Permalink to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Ljung-Box Test: A p-value of 0.88 suggests that there is no significant autocorrelation in the residuals at lag 1, which is good.</p></li>
+<li><p>Jarque-Bera Test: A p-value of 0.00 indicates that the residuals are not normally distributed, which could be a concern.</p></li>
+<li><p>Heteroskedasticity Test: The p-value of 0.00 suggests the presence of heteroskedasticity, which means the variance of the residuals is not constant over time.</p></li>
+<li><p>Skew and Kurtosis: The skewness is close to 0, suggesting the residuals are symmetrically distributed. Kurtosis of 4.76 suggests a leptokurtic distribution, which means the residuals have heavy tails or outliers.</p></li>
+</ul>
+</section>
+<section id="forecast-plot-interpretation">
+<h4>Forecast Plot Interpretation:<a class="headerlink" href="#forecast-plot-interpretation" title="Permalink to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Training Data (Blue Line): The historical data used to train the model.</p></li>
+<li><p>Test Data (Gray Line): The out-of-sample actual closing prices not used for training.</p></li>
+<li><p>Forecast (Red Line with Confidence Interval): The predicted values with their confidence interval. The forecast seems to follow the trend of the test data initially but then diverges.</p></li>
+<li><p>Confidence Interval (Red Shaded Area): Represents the uncertainty in the forecast. The wider this area, the less certain the model is about the forecast.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">actuals</span> <span class="o">=</span> <span class="n">test_data</span>  <span class="c1"># the actual test set values</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">forecast_mean</span>  <span class="c1"># the predicted values from ARIMA</span>
+
+<span class="c1"># Calculate errors</span>
+<span class="n">mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">actuals</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+<span class="n">mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">actuals</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+<span class="n">rmse_val</span> <span class="o">=</span> <span class="n">rmse</span><span class="p">(</span><span class="n">actuals</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+<span class="c1"># Print out the errors</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAE: </span><span class="si">{</span><span class="n">mae</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MSE: </span><span class="si">{</span><span class="n">mse</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE: </span><span class="si">{</span><span class="n">rmse_val</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MAE: 7.632940590731813
+MSE: 84.90333375839516
+RMSE: 9.214300502935378
+</pre></div>
+</div>
+</div>
+</div>
+<p>Range of Data for feature Close:</p>
+<ul class="simple">
+<li><p>Max: 381</p></li>
+<li><p>75th Percentile: 186.57</p></li>
+<li><p>Mean: 170.07</p></li>
+<li><p>Median (50th Percentile): 164.20</p></li>
+<li><p>25th Percentile: 158.07</p></li>
+<li><p>Min: 137.94</p></li>
+<li><p>Standard Deviation: 8.53</p></li>
+</ul>
+<p>Mean Absolute Error (MAE): 7.63
+The MAE is less than the standard deviation of the dataset, which is a good sign. It indicates that, on average, the forecast errors are smaller than the typical variation in the data.</p>
+<p>Mean Squared Error (MSE): 84.90
+The MSE is quite a bit higher than the MAE due to the squaring of the errors, which emphasizes larger errors. It’s about 116.2% of the variance (as standard deviation squared is 72.80), suggesting that the errors might have a few outliers or some larger errors, because it is higher than the variance of the data.</p>
+<p>Root Mean Squared Error (RMSE): 9.21
+The RMSE is slightly higher than the standard deviation of your dataset. This suggests that the errors are, on average, slightly larger than the typical variation in your data, but still within a comparable range.
+Interpretation:
+Given that the mean of  data is around 170, an MAE of 7.63 represents an average error of about 4.49% relative to the mean. Similarly, an RMSE of 9.21 is about 5.42% of the mean. These percentages are relatively small, indicating a model that performs reasonably well.
+However, the context of what these errors mean practically is important. Since the time series represents something like stock prices, and i am  making trading decisions, even a 5% error could be significant.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">analyze_residuals</span><span class="p">(</span><span class="n">residuals</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Summary Statistics:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">residuals</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+    <span class="n">residuals</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+    <span class="n">residuals</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Density&#39;</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">probplot</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="n">plt</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Histogram&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Now call the function with the residuals of your model</span>
+<span class="n">analyze_residuals</span><span class="p">(</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Summary Statistics:
+ count    304.000000
+mean       0.074269
+std        3.272734
+min      -23.869279
+25%       -1.536436
+50%        0.241036
+75%        1.887475
+max       11.002567
+dtype: float64
+</pre></div>
+</div>
+<img alt="../_images/d5f1665d4fcfbc14ed070fb45b7e456a35070cce8c80982af53f176cac824310.png" src="../_images/d5f1665d4fcfbc14ed070fb45b7e456a35070cce8c80982af53f176cac824310.png" />
+</div>
+</div>
+<p>The residuals seem to be randomly distributed around zero without clear patterns, which is good.
+The histogram and density plot suggest that the residuals may not be normally distributed due to heavy tails, which could be a concern. This might indicate that extreme values are more frequent than expected for a normal distribution.
+The Q-Q plot further supports the presence of heavy tails or outliers, which the ARIMA model did not fully capture. This could affect the accuracy of the model, especially in predicting extreme events.</p>
+</section>
+</section>
+<section id="final-analysis-and-possible-recommendations">
+<h3>Final Analysis and Possible Recommendations<a class="headerlink" href="#final-analysis-and-possible-recommendations" title="Permalink to this heading">#</a></h3>
+<p>The model has done a fair job of capturing the pattern in the historical data and can forecast the direction of the time series to some extent. However, there are a few concerns:</p>
+<p>The residuals do not follow a normal distribution and there is evidence of heteroskedasticity, which can affect the confidence intervals and forecasts.
+The forecast confidence interval widens as we move further out, indicating increasing uncertainty in the forecasted values.</p>
+<ul class="simple">
+<li><p>To deal with heteroskedasticity, GARCH models or ARIMA with conditional heteroskedasticity (such as ARIMA-GARCH) could be considered.</p></li>
+<li><p>Model diagnostics should be conducted, including residual analysis to ensure that the model’s assumptions are not violated.</p></li>
+<li><p>Cross-validation or out-of-time validation could help in assessing the model’s predictive power more reliably.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="supervised_learning.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Supervised Learning</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="reinforcement_learning.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Reinforcement Learning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-application-with-amzn-stock">An Application with AMZN stock</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stl-decomposition">STL Decomposition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-for-stationarity">Check for Stationarity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#acf-and-pacf-plots">ACF and PACF plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#train-test-split">Train &amp; Test Split</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-arima">Fitting ARIMA</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-diagnostics">Model Diagnostics</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-output-interpretation">Summary Output Interpretation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-tests">Diagnostic Tests:</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#forecast-plot-interpretation">Forecast Plot Interpretation:</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-analysis-and-possible-recommendations">Final Analysis and Possible Recommendations</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By André Ramolivaz, Alberto Tomasin, Simone Dinato
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
