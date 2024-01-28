@@ -6,10 +6,11 @@ root: index
 parts:
   - caption: Data Preparation and Analysis
     chapters:
-    - file: 01-preparation_analysis/data_retrivial
-    - file: 01-preparation_analysis/data_preprocessing
-    - file: 01-preparation_analysis/exploratory_data_analysis
+    - file: notebooks/data_retrivial
+    - file: notebooks/data_preprocessing
+    - file: notebooks/exploratory_data_analysis
   - caption: Data Modeling
     chapters:
-    - file: 01-preparation_analysis/Supervised_Learning
-    - file: 01-preparation_analysis/reinforcement_learning
+    - file: notebooks/supervised_learning
+    - file: notebooks/time_series_analysis
+    - file: notebooks/reinforcement_learning
