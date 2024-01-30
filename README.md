@@ -12,7 +12,7 @@ Main features include:
 - exploratory data analysis
 - model fitting (several approach: ARIMA, RF, LG RL)
 
-The book is avaible [here](https://andreramolivaz.github.io/Stock-Forecasting/index.html).
+The book is avaible [here](https://andreramolivaz.github.io/StockForecasting/index.html).
 
 
 [pypi-badge]: https://img.shields.io/pypi/v/jupyter-book.svg
